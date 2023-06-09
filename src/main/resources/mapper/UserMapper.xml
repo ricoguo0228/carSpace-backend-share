@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.carspacesdemo.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.carspacesdemo.model.User">
+            <id property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="userPassword" column="user_password" jdbcType="VARCHAR"/>
+            <result property="userPhone" column="user_phone" jdbcType="VARCHAR"/>
+            <result property="userRole" column="user_role" jdbcType="TINYINT"/>
+            <result property="userCredit" column="user_credit" jdbcType="INTEGER"/>
+            <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
+            <result property="insertTime" column="insert_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        user_id,username,user_password,
+        user_phone,user_role,user_credit,
+        is_delete,insert_time,update_time,
+        nick_name
+    </sql>
+</mapper>
