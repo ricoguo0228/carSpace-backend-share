@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CarSpacesServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> implements CarSpacesService {
