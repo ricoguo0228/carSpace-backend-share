@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.carspacesdemo.mapper.ReservationMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.carspacesdemo.model.Reservation">
+            <id property="reserveId" column="reserve_id" jdbcType="BIGINT"/>
+            <result property="reserverId" column="reserver_id" jdbcType="BIGINT"/>
+            <result property="carId" column="car_id" jdbcType="BIGINT"/>
+            <result property="reserveStatus" column="reserve_status" jdbcType="TINYINT"/>
+            <result property="reserveStartTime" column="reserve_start_time" jdbcType="TIMESTAMP"/>
+            <result property="reserveEndTime" column="reserve_end_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        reserve_id,reserver_id,car_id,
+        reserve_status,reserve_start_time,reserve_end_time
+    </sql>
+</mapper>
