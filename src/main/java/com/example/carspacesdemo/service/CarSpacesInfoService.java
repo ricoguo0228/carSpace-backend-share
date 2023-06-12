@@ -2,8 +2,11 @@ package com.example.carspacesdemo.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.carspacesdemo.model.Carspace;
+import com.example.carspacesdemo.model.ComplCarspace;
+import com.example.carspacesdemo.model.User;
 
-import java.sql.Date;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Rico
@@ -52,4 +55,44 @@ public interface CarSpacesInfoService extends IService<Carspace> {
      * @return
      */
     boolean carSpaceInvoke(long carId);
+
+    /**
+     * 获取所有车位
+     *
+     * @return
+     * @author Rico
+     */
+    List<ComplCarspace> getCarSpaces();
+
+    /**
+     * 获取用户创建的所有车位
+     *
+     * @param userId
+     * @return
+     */
+    List<ComplCarspace> getUserCarSpaces(long userId);
+
+    /***
+     * 获取用户预定的车位
+     *
+     * @param userId
+     * @return
+     */
+    List<ComplCarspace> getReservedCarSpaces(long userId);
+
+    /**
+     * 获取可供返回显示信息的车位
+     *
+     * @param carspaces
+     * @return
+     */
+    List<ComplCarspace> getComplCarspacesByList(List<Carspace> carspaces);
+
+    /**
+     * 重载返回显示信息的车位函数
+     *
+     * @param CarIds
+     * @return
+     */
+    List<ComplCarspace> getComplCarspacesByCarIds(List<Long> CarIds);
 }

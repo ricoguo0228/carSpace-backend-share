@@ -16,12 +16,15 @@
             <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
             <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
             <result property="ownerId" column="owner_id" jdbcType="BIGINT"/>
+            <result property="countTime" column="count_time" jdbcType="INTEGER"/>
+            <result property="reserveTime" column="reserve_time" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         car_id,location,price,
         image_url,car_status,insert_time,
         is_delete,update_time,start_time,
-        end_time,owner_id
+        end_time,owner_id,count_time,
+        reserve_time
     </sql>
 </mapper>

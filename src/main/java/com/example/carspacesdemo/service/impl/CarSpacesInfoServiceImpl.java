@@ -1,16 +1,22 @@
 package com.example.carspacesdemo.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.carspacesdemo.common.ErrorCode;
 import com.example.carspacesdemo.exception.BusinessException;
 import com.example.carspacesdemo.mapper.CarspaceMapper;
+import com.example.carspacesdemo.mapper.ReservationMapper;
+import com.example.carspacesdemo.mapper.UserMapper;
 import com.example.carspacesdemo.model.Carspace;
+import com.example.carspacesdemo.model.ComplCarspace;
+import com.example.carspacesdemo.model.Reservation;
+import com.example.carspacesdemo.model.User;
 import com.example.carspacesdemo.service.CarSpacesInfoService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.sql.Date;
+import java.util.*;
 
 /**
 * @author Rico
@@ -22,6 +28,10 @@ public class CarSpacesInfoServiceImpl extends ServiceImpl<CarspaceMapper, Carspa
 
     @Resource
     CarspaceMapper carSpacesMapper;
+    @Resource
+    ReservationMapper reservationMapper;
+    @Resource
+    UserMapper userMapper;
     @Override
     public long carSpaceCreate(String location, int price, String imageUrl, Date startTime, Date endTime) {
         if(StringUtils.isAnyBlank(location)){
@@ -94,6 +104,96 @@ public class CarSpacesInfoServiceImpl extends ServiceImpl<CarspaceMapper, Carspa
         }
         return updateResult;
     }
+
+    @Override
+    public List<ComplCarspace> getCarSpaces() {
+        List<Carspace> carspaces = carSpacesMapper.selectList(new QueryWrapper<>());
+        return getComplCarspacesByList(carspaces);
+    }
+
+    @Override
+    public List<ComplCarspace> getUserCarSpaces(long userId) {
+        QueryWrapper<Carspace> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id",userId);
+        List<Carspace> carspaces = carSpacesMapper.selectList(queryWrapper);
+        return getComplCarspacesByList(carspaces);
+    }
+
+    @Override
+    public List<ComplCarspace> getReservedCarSpaces(long userId) {
+        QueryWrapper<Reservation> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("reserver_id",userId);
+        List<Reservation> reservations = reservationMapper.selectList(queryWrapper);
+        List<Long> CarIds = new ArrayList<>();
+        for(Reservation reservation : reservations){
+            CarIds.add(reservation.getCarId());
+        }
+        return getComplCarspacesByCarIds(CarIds);
+    }
+
+    @Override
+    public List<ComplCarspace> getComplCarspacesByList(List<Carspace> carspaces) {
+        List<ComplCarspace> complCarspaces = new ArrayList<>();
+        for(Carspace carSpace : carspaces){
+            Date startTime = carSpace.getStartTime();
+            Date endTime = carSpace.getEndTime();
+            QueryWrapper<Reservation> queryWrapper = new QueryWrapper<Reservation>();
+            queryWrapper.eq("car_id",carSpace.getCarId());
+            queryWrapper.eq("reserve_status",0);
+            List<Reservation> reservations = reservationMapper.selectList(queryWrapper);
+            Map<Date,Date> reserveSlots = new HashMap<Date,Date>();
+            int reserveStatus = -1;
+            for(Reservation reservation : reservations){
+                reserveSlots.put(reservation.getReserveStartTime(),reservation.getReserveEndTime());
+                reserveStatus = reservation.getReserveStatus();
+            }
+            Map<Date, Date> availableSlots = new HashMap<>();
+            for(Date left : reserveSlots.keySet()){
+                if(left.after(startTime) && left.before(endTime)){
+                    availableSlots.put(startTime, left);
+                }
+                if(reserveSlots.get(left).after(startTime) && reserveSlots.get(left).before(endTime)){
+                    availableSlots.put(reserveSlots.get(left), endTime);
+                }
+            }
+            User user = userMapper.selectById(carSpace.getOwnerId());
+            complCarspaces.add(new ComplCarspace(carSpace,availableSlots,user,reserveStatus));
+        }
+        return complCarspaces;
+    }
+
+    @Override
+    public List<ComplCarspace> getComplCarspacesByCarIds(List<Long> CarIds) {
+        List<ComplCarspace> complCarspaces = new ArrayList<>();
+        for(long CarId : CarIds){
+            Carspace carSpace = carSpacesMapper.selectById(CarId);
+            Date startTime = carSpace.getStartTime();
+            Date endTime = carSpace.getEndTime();
+            QueryWrapper<Reservation> queryWrapper = new QueryWrapper<Reservation>();
+            queryWrapper.eq("car_id",carSpace.getCarId());
+            queryWrapper.eq("reserve_status",0);
+            List<Reservation> reservations = reservationMapper.selectList(queryWrapper);
+            Map<Date,Date> reserveSlots = new HashMap<Date,Date>();
+            int reserveStatus = -1;
+            for(Reservation reservation : reservations){
+                reserveSlots.put(reservation.getReserveStartTime(),reservation.getReserveEndTime());
+                reserveStatus = reservation.getReserveStatus();
+            }
+            Map<Date, Date> availableSlots = new HashMap<>();
+            for(Date left : reserveSlots.keySet()){
+                if(left.after(startTime) && left.before(endTime)){
+                    availableSlots.put(startTime, left);
+                }
+                if(reserveSlots.get(left).after(startTime) && reserveSlots.get(left).before(endTime)){
+                    availableSlots.put(reserveSlots.get(left), endTime);
+                }
+            }
+            User user = userMapper.selectById(carSpace.getOwnerId());
+            complCarspaces.add(new ComplCarspace(carSpace,availableSlots,user,reserveStatus));
+        }
+        return complCarspaces;
+    }
+
 }
 
 
