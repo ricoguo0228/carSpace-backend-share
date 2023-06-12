@@ -10,10 +10,7 @@ import com.example.carspacesdemo.service.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -26,10 +23,30 @@ import static com.example.carspacesdemo.constant.UsersConstants.*;
  * @author Rico
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UsersController {
     @Resource
     private UsersService usersService;
+
+    /**
+     * 获取当前用户
+     *
+     * @param request
+     * @return
+     */
+    @GetMapping("/current")
+    public BaseResponse<User> getCurrentUser(HttpServletRequest request) {
+        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
+        User currentUser = (User) userObj;
+        if (currentUser == null) {
+            throw new BusinessException(ErrorCode.LOGIN_ERROR);
+        }
+        long userId = currentUser.getUserId();
+        // TODO 校验用户是否合法
+        User user = usersService.getById(userId);
+        User safetyUser = usersService.getSafetyUser(user);
+        return success(safetyUser);
+    }
 
     @PostMapping("/register")
     private BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
@@ -62,15 +79,18 @@ public class UsersController {
     }
 
     @PostMapping("/logout")
-    private BaseResponse<Integer> userLogout(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest httpServletRequest) {
+    private BaseResponse<Boolean> userLogout(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest httpServletRequest) {
         if (userLoginRequest == null) {
             return null;
         }
-        return success(usersService.userLogout(httpServletRequest));
+        if(usersService.userLogout(httpServletRequest)){
+            return success(true);
+        }
+        throw new BusinessException(ErrorCode.SYSTEM_ERROR);
     }
 
     @PostMapping("/delete")
-    private BaseResponse deleteUsers(@RequestBody long id, HttpServletRequest httpServletRequest) {
+    private BaseResponse<Boolean> deleteUsers(@RequestBody long id, HttpServletRequest httpServletRequest) {
         if (!isAdmin(httpServletRequest))
             throw new BusinessException(ErrorCode.POWER_ERROR, "权限不足");
         if (id <= 0) {
@@ -80,7 +100,7 @@ public class UsersController {
     }
 
     @PostMapping("/updatePassword")
-    private BaseResponse userUpdatePassword(@RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest) {
+    private BaseResponse<Boolean> userUpdatePassword(@RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest) {
         if (userUpdatePasswordRequest == null) {
             return null;
         }
@@ -95,7 +115,7 @@ public class UsersController {
     }
 
     @PostMapping("/updateNickName")
-    private BaseResponse userUpdateNickName(@RequestBody UserUpdateNickNameRequest userUpdateNickNameRequest) {
+    private BaseResponse<User> userUpdateNickName(@RequestBody UserUpdateNickNameRequest userUpdateNickNameRequest) {
         if (userUpdateNickNameRequest == null) {
             return null;
         }
@@ -109,7 +129,7 @@ public class UsersController {
     }
 
     @PostMapping("/updatePhone")
-    private BaseResponse userUpdatePhone(@RequestBody UserUpdatePhoneRequest userUpdatePhoneRequest) {
+    private BaseResponse<User> userUpdatePhone(@RequestBody UserUpdatePhoneRequest userUpdatePhoneRequest) {
         if (userUpdatePhoneRequest == null) {
             return null;
         }

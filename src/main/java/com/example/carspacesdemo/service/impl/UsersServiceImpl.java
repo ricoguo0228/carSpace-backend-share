@@ -243,6 +243,7 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
         safetyuser.setUserPhone(originUser.getUserPhone());
         safetyuser.setInsertTime(originUser.getInsertTime());
         safetyuser.setUserRole(originUser.getUserRole());
+        safetyuser.setUserCredit(originUser.getUserCredit());
         safetyuser.setNickName(originUser.getNickName());
         return safetyuser;
     }
