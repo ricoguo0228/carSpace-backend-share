@@ -55,15 +55,6 @@ public class Carspace implements Serializable {
      */
     private LocalDateTime updateTime;
 
-    /**
-     * 车位预定的开始时间
-     */
-    private LocalDateTime startTime;
-
-    /**
-     * 车位预定的结束时间
-     */
-    private LocalDateTime endTime;
 
     /**
      * 车位拥有者

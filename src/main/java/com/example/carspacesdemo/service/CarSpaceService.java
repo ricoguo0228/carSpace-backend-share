@@ -6,6 +6,7 @@ import com.example.carspacesdemo.model.entity.ComplCarspace;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Rico
@@ -19,12 +20,10 @@ public interface CarSpaceService extends IService<Carspace> {
      * @param location
      * @param price
      * @param imageUrl
-     * @param startTime
-     * @param endTime
      * @return
      * @author Rico
      */
-    long carSpaceCreate(long ownerId, String location, int price, String imageUrl, LocalDateTime startTime, LocalDateTime endTime);
+    long carSpaceCreate(long ownerId, String location, int price, String imageUrl, Map<LocalDateTime,LocalDateTime> TimeSlots);
 
     /**
      * 更新车位信息
@@ -33,11 +32,9 @@ public interface CarSpaceService extends IService<Carspace> {
      * @param location
      * @param price
      * @param imageUrl
-     * @param startTime
-     * @param endTime
      * @return
      */
-    boolean carSpaceUpdate(long carId, String location, int price, String imageUrl, LocalDateTime startTime, LocalDateTime endTime,long ownerId);
+    boolean carSpaceUpdate(long carId, String location, int price, String imageUrl, Map<LocalDateTime,LocalDateTime> TimeSlots);
 
     /**
      * 车位发布

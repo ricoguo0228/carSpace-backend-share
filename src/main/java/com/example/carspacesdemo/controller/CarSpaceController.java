@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static com.example.carspacesdemo.common.ResultUtils.success;
 import static com.example.carspacesdemo.constant.UserConstants.USER_LOGIN_STATE;
@@ -30,80 +31,87 @@ public class CarSpaceController {
     private CarSpaceService carSpacesService;
 
     @PostMapping("/create")
-    private BaseResponse<Long> carSpaceCreate(@RequestBody CarSpaceCreateRequest carSpaceCreateRequest, HttpServletRequest httpServletRequest) {
-        if(carSpaceCreateRequest == null){
+    private BaseResponse<Long> carSpaceCreate(@RequestBody CarSpaceCreateRequest createRequest, HttpServletRequest httpServletRequest) {
+        if (createRequest == null) {
             return null;
         }
-        String location = carSpaceCreateRequest.getLocation();
-        int price = carSpaceCreateRequest.getPrice();
-        LocalDateTime startDate = carSpaceCreateRequest.getStartDate();
-        LocalDateTime endDate = carSpaceCreateRequest.getEndDate();
-        String imageUrl = carSpaceCreateRequest.getImageUrl();
+        String location = createRequest.getLocation();
+        int price = createRequest.getPrice();
+        String imageUrl = createRequest.getImageUrl();
+        Map<LocalDateTime, LocalDateTime> timeSlots = createRequest.getTimeSlots();
         if (StringUtils.isAnyBlank(location)) {
-            throw new BusinessException(ErrorCode.ERROR_PARAM,"参数不可以为空");
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
         //获取用户id
-        User user = (User)httpServletRequest.getSession().getAttribute(USER_LOGIN_STATE);
+        User user = (User) httpServletRequest.getSession().getAttribute(USER_LOGIN_STATE);
         long userId = user.getUserId();
-        long CarId = carSpacesService.carSpaceCreate(userId,location, price, imageUrl, startDate, endDate);
+        long CarId = carSpacesService.carSpaceCreate(userId, location, price, imageUrl, timeSlots);
         return success(CarId);
     }
+
     @PostMapping("/delete")
     private BaseResponse carSpaceDelete(@RequestBody IdRequest idRequest) {
         Long id = idRequest.getId();
-        if(id <= 0){
-            throw new BusinessException(ErrorCode.ERROR_PARAM,"车辆id不可以为空");
+        if (id <= 0) {
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
         }
         return success(carSpacesService.removeById(id));
     }
+
     @PostMapping("/update")
     private BaseResponse carSpaceUpdate(@RequestBody CarSpaceUpdateRequest updateRequest, HttpServletRequest httpServletRequest) {
-        if(updateRequest == null){
+        if (updateRequest == null) {
             return null;
         }
         long carId = updateRequest.getCarId();
         String location = updateRequest.getLocation();
         int price = updateRequest.getPrice();
-        LocalDateTime startDate = updateRequest.getStartTime();
-        LocalDateTime endDate = updateRequest.getEndTime();
         String imageUrl = updateRequest.getImageUrl();
-        //获取用户id
-        User user = (User)httpServletRequest.getSession().getAttribute(USER_LOGIN_STATE);
-        long ownerId = user.getUserId();
-        boolean res = carSpacesService.carSpaceUpdate(carId, location, price, imageUrl, startDate, endDate, ownerId);
+        Map<LocalDateTime, LocalDateTime> timeSlots = updateRequest.getTimeSlots();
+        if (carId <= 0) {
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
+        }
+        boolean res = carSpacesService.carSpaceUpdate(carId, location, price, imageUrl, timeSlots);
         return success(res);
     }
+
     @PostMapping("/publish")
     private BaseResponse carSpacePublish(@RequestBody IdRequest idRequest) {
         Long id = idRequest.getId();
-        if(id <= 0){
-            throw new BusinessException(ErrorCode.ERROR_PARAM,"车辆id不可以为空");
+        if (id <= 0) {
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
         }
         return success(carSpacesService.carSpacePublish(id));
     }
+
     @PostMapping("/invoke")
     private BaseResponse carSpaceInvoke(@RequestBody IdRequest idRequest) {
         Long id = idRequest.getId();
-        if(id <= 0){
-            throw new BusinessException(ErrorCode.ERROR_PARAM,"车辆id不可以为空");
+        if (id <= 0) {
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
         }
         return success(carSpacesService.carSpaceInvoke(id));
     }
+
     @PostMapping("/getCarSpaces")
-    public BaseResponse getCarSpaces(@RequestBody IdRequest idRequest){
-        Long id = idRequest.getId();
+    public BaseResponse getCarSpaces(@RequestBody IdRequest idRequest) {
         List<ComplCarspace> complCarSpaces = carSpacesService.getCarSpaces();
         return success(complCarSpaces);
     }
+
     @PostMapping("/getUserCarSpaces")
-    public BaseResponse getUserSpaces(@RequestBody IdRequest idRequest){
-        Long id = idRequest.getId();
+    public BaseResponse getUserSpaces(@RequestBody IdRequest idRequest) {
+        long id = idRequest.getId();
+        if (id <= 0) {
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
+        }
         List<ComplCarspace> complCarSpaces = carSpacesService.getUserCarSpaces(id);
         return success(complCarSpaces);
     }
+
     @PostMapping("/getReservedCarSpaces")
-    public BaseResponse getReservedSpaces(@RequestBody IdRequest idRequest){
-        Long id = idRequest.getId();
+    public BaseResponse getReservedSpaces(@RequestBody IdRequest idRequest) {
+        long id = idRequest.getId();
         List<ComplCarspace> complCarSpaces = carSpacesService.getReservedCarSpaces(id);
         return success(complCarSpaces);
     }

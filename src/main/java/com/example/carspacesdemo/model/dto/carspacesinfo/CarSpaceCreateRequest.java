@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 /**
  * 车位信息创建请求体
@@ -15,6 +16,5 @@ public class CarSpaceCreateRequest implements Serializable {
     String location;
     int price;
     String imageUrl;
-    LocalDateTime startDate;
-    LocalDateTime endDate;
+    Map<LocalDateTime,LocalDateTime> TimeSlots;
 }
