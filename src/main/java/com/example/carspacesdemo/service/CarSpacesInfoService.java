@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.carspacesdemo.model.entity.Carspace;
 import com.example.carspacesdemo.model.entity.ComplCarspace;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +18,7 @@ public interface CarSpacesInfoService extends IService<Carspace> {
     /**
      * 创建新车位
      *
+     * @param userId
      * @param location
      * @param price
      * @param imageUrl
@@ -25,7 +27,7 @@ public interface CarSpacesInfoService extends IService<Carspace> {
      * @return
      * @author Rico
      */
-    long carSpaceCreate(String location, int price, String imageUrl, LocalDateTime startTime, LocalDateTime endTime);
+    long carSpaceCreate(long userId, String location, int price, String imageUrl, LocalDateTime startTime, LocalDateTime endTime);
 
     /**
      * 更新车位信息

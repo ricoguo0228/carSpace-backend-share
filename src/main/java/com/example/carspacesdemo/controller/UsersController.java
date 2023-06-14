@@ -1,6 +1,7 @@
 package com.example.carspacesdemo.controller;
 
 import com.example.carspacesdemo.common.BaseResponse;
+import com.example.carspacesdemo.common.IdRequest;
 import com.example.carspacesdemo.common.ErrorCode;
 import com.example.carspacesdemo.exception.BusinessException;
 import com.example.carspacesdemo.model.dto.Users.*;
@@ -90,9 +91,10 @@ public class UsersController {
     }
 
     @PostMapping("/delete")
-    private BaseResponse<Boolean> deleteUsers(@RequestBody long id, HttpServletRequest httpServletRequest) {
+    private BaseResponse<Boolean> deleteUsers(@RequestBody IdRequest idRequest, HttpServletRequest httpServletRequest) {
         if (!isAdmin(httpServletRequest))
             throw new BusinessException(ErrorCode.POWER_ERROR, "权限不足");
+        Long id = idRequest.getId();
         if (id <= 0) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "id小于0");
         }

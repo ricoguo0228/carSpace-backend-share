@@ -16,11 +16,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.example.carspacesdemo.constant.UserConstants.USER_LOGIN_STATE;
 
 /**
 * @author Rico
@@ -37,19 +40,21 @@ public class CarSpacesInfoServiceImpl extends ServiceImpl<CarspaceMapper, Carspa
     @Resource
     UserMapper userMapper;
     @Override
-    public long carSpaceCreate(String location, int price, String imageUrl, LocalDateTime startTime, LocalDateTime endTime) {
+    public long carSpaceCreate(long userId,String location, int price, String imageUrl, LocalDateTime startTime, LocalDateTime endTime) {
         if(StringUtils.isAnyBlank(location)){
             throw new BusinessException(ErrorCode.ERROR_PARAM,"位置信息不能为空");
         }
         if(price < 0){
             throw new BusinessException(ErrorCode.ERROR_PARAM,"价格不能小于0");
         }
+
         Carspace carSpace = new Carspace();
         carSpace.setLocation(location);
         carSpace.setPrice(price);
         carSpace.setImageUrl(imageUrl);
         carSpace.setStartTime(startTime);
         carSpace.setEndTime(endTime);
+        carSpace.setOwnerId(userId);
         boolean saveResult = this.save(carSpace);
         if(!saveResult){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"保存失败了");

@@ -1,10 +1,12 @@
 package com.example.carspacesdemo.controller;
 
 import com.example.carspacesdemo.common.BaseResponse;
+import com.example.carspacesdemo.common.IdRequest;
 import com.example.carspacesdemo.common.ErrorCode;
 import com.example.carspacesdemo.exception.BusinessException;
 import com.example.carspacesdemo.model.entity.ComplCarspace;
 import com.example.carspacesdemo.model.dto.carspacesinfo.CarSpacesCreateRequest;
+import com.example.carspacesdemo.model.entity.User;
 import com.example.carspacesdemo.service.CarSpacesInfoService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,11 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.sql.Date;
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.example.carspacesdemo.common.ResultUtils.success;
+import static com.example.carspacesdemo.constant.UserConstants.USER_LOGIN_STATE;
 
 @RestController
 @RequestMapping("/carSpaces")
@@ -26,7 +29,7 @@ public class CarSpacesController {
     private CarSpacesInfoService carSpacesService;
 
     @PostMapping("/create")
-    private BaseResponse<Long> carSpaceCreate(@RequestBody CarSpacesCreateRequest carSpacesCreateRequest) {
+    private BaseResponse<Long> carSpaceCreate(@RequestBody CarSpacesCreateRequest carSpacesCreateRequest, HttpServletRequest httpServletRequest) {
         if(carSpacesCreateRequest == null){
             return null;
         }
@@ -38,43 +41,60 @@ public class CarSpacesController {
         if (StringUtils.isAnyBlank(location)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM,"参数不可以为空");
         }
-        long id = carSpacesService.carSpaceCreate(location, price, imageUrl, startDate, endDate);
-        return success(id);
+        //获取用户id
+        User user = (User)httpServletRequest.getSession().getAttribute(USER_LOGIN_STATE);
+        long userId = user.getUserId();
+        long CarId = carSpacesService.carSpaceCreate(userId,location, price, imageUrl, startDate, endDate);
+        return success(CarId);
     }
     @PostMapping("/delete")
-    private BaseResponse carSpaceDelete(@RequestBody long CarId) {
-        if(CarId <= 0){
+    private BaseResponse carSpaceDelete(@RequestBody IdRequest idRequest) {
+        Long id = idRequest.getId();
+        if(id <= 0){
             throw new BusinessException(ErrorCode.ERROR_PARAM,"车辆id不可以为空");
         }
-        return success(carSpacesService.removeById(CarId));
+        return success(carSpacesService.removeById(id));
+    }
+    @PostMapping("/update")
+    private BaseResponse carSpaceUpdate(@RequestBody IdRequest idRequest) {
+        Long id = idRequest.getId();
+        if(id <= 0){
+            throw new BusinessException(ErrorCode.ERROR_PARAM,"车辆id不可以为空");
+        }
+        return success(carSpacesService.removeById(id));
     }
     @PostMapping("/publish")
-    private BaseResponse carSpacePublish(@RequestBody long CarId) {
-        if(CarId <= 0){
+    private BaseResponse carSpacePublish(@RequestBody IdRequest idRequest) {
+        Long id = idRequest.getId();
+        if(id <= 0){
             throw new BusinessException(ErrorCode.ERROR_PARAM,"车辆id不可以为空");
         }
-        return success(carSpacesService.carSpacePublish(CarId));
+        return success(carSpacesService.carSpacePublish(id));
     }
     @PostMapping("/invoke")
-    private BaseResponse carSpaceInvoke(@RequestBody long CarId) {
-        if(CarId <= 0){
+    private BaseResponse carSpaceInvoke(@RequestBody IdRequest idRequest) {
+        Long id = idRequest.getId();
+        if(id <= 0){
             throw new BusinessException(ErrorCode.ERROR_PARAM,"车辆id不可以为空");
         }
-        return success(carSpacesService.carSpaceInvoke(CarId));
+        return success(carSpacesService.carSpaceInvoke(id));
     }
-    @RequestMapping("/getCarSpaces")
-    public BaseResponse getCarSpaces(@RequestBody long userId){
+    @PostMapping("/getCarSpaces")
+    public BaseResponse getCarSpaces(@RequestBody IdRequest idRequest){
+        Long id = idRequest.getId();
         List<ComplCarspace> complCarSpaces = carSpacesService.getCarSpaces();
         return success(complCarSpaces);
     }
-    @RequestMapping("/getUserCarSpaces")
-    public BaseResponse getUserSpaces(@RequestBody long userId){
-        List<ComplCarspace> complCarSpaces = carSpacesService.getUserCarSpaces(userId);
+    @PostMapping("/getUserCarSpaces")
+    public BaseResponse getUserSpaces(@RequestBody IdRequest idRequest){
+        Long id = idRequest.getId();
+        List<ComplCarspace> complCarSpaces = carSpacesService.getUserCarSpaces(id);
         return success(complCarSpaces);
     }
-    @RequestMapping("/getReservedCarSpaces")
-    public BaseResponse getReservedSpaces(@RequestBody long userId){
-        List<ComplCarspace> complCarSpaces = carSpacesService.getReservedCarSpaces(userId);
+    @PostMapping("/getReservedCarSpaces")
+    public BaseResponse getReservedSpaces(@RequestBody IdRequest idRequest){
+        Long id = idRequest.getId();
+        List<ComplCarspace> complCarSpaces = carSpacesService.getReservedCarSpaces(id);
         return success(complCarSpaces);
     }
 }
