@@ -42,32 +42,13 @@ public interface UserService extends IService<User> {
     /**
      * 用户修改密码功能实现
      *
-     * @param username
+     * @param userId
      * @param userNewPassword
      * @param userPhone
+     * @param NickName
      * @return
      */
-    boolean userUpdatePassword(String username, String userNewPassword, String userPhone);
-
-    /**
-     * 用户修改手机号功能实现
-     *
-     * @param username
-     * @param userNewPhone
-     * @param userPassword
-     * @return
-     */
-    User userUpdatePhone(String username, String userPassword, String userNewPhone);
-
-    /**
-     * 用户修改昵称功能实现
-     *
-     * @param username
-     * @param NewNickName
-     * @return
-     */
-    User userUpdateNickName(String username, String NewNickName);
-
+    boolean userUpdate(long userId,String userNewPassword, String userPhone, String NickName) ;
 
     /**
      * 用户脱敏

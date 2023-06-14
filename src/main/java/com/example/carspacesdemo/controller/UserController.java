@@ -101,48 +101,21 @@ public class UserController {
         return success(userService.removeById(id));
     }
 
-    @PostMapping("/updatePassword")
-    private BaseResponse<Boolean> userUpdatePassword(@RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest) {
+    @PostMapping("/update")
+    private BaseResponse<Boolean> userUpdate(@RequestBody UserUpdateRequest userUpdatePasswordRequest,HttpServletRequest httpServletRequest) {
         if (userUpdatePasswordRequest == null) {
             return null;
         }
-        String userAccount = userUpdatePasswordRequest.getUserAccount();
         String userNewPassword = userUpdatePasswordRequest.getUserNewPassword();
-        String userPhone = userUpdatePasswordRequest.getUserPhone();
-        if (StringUtils.isAnyBlank(userAccount, userNewPassword, userPhone)) {
+        String userNewPhone = userUpdatePasswordRequest.getUserPhone();
+        String NickName = userUpdatePasswordRequest.getNickName();
+        if (StringUtils.isAnyBlank(userNewPassword, userNewPhone,NickName)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
-        boolean res = userService.userUpdatePassword(userAccount, userNewPassword, userPhone);
+        User user = (User)httpServletRequest.getSession().getAttribute(USER_LOGIN_STATE);
+        long id = user.getUserId();
+        boolean res = userService.userUpdate(id, userNewPassword, userNewPhone,NickName);
         return success(res);
-    }
-
-    @PostMapping("/updateNickName")
-    private BaseResponse<User> userUpdateNickName(@RequestBody UserUpdateNickNameRequest userUpdateNickNameRequest) {
-        if (userUpdateNickNameRequest == null) {
-            return null;
-        }
-        String userAccount = userUpdateNickNameRequest.getUserAccount();
-        String nickName = userUpdateNickNameRequest.getNickName();
-        if (StringUtils.isAnyBlank(userAccount, nickName)) {
-            throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
-        }
-        User user = userService.userUpdateNickName(userAccount, nickName);
-        return success(user);
-    }
-
-    @PostMapping("/updatePhone")
-    private BaseResponse<User> userUpdatePhone(@RequestBody UserUpdatePhoneRequest userUpdatePhoneRequest) {
-        if (userUpdatePhoneRequest == null) {
-            return null;
-        }
-        String userAccount = userUpdatePhoneRequest.getUserAccount();
-        String userPassword = userUpdatePhoneRequest.getUserPassword();
-        String userPhone = userUpdatePhoneRequest.getUserNewPhone();
-        if (StringUtils.isAnyBlank(userAccount, userPassword, userPhone)) {
-            throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
-        }
-        User user = userService.userUpdatePhone(userAccount, userPassword, userPhone);
-        return success(user);
     }
 
     /**
