@@ -12,24 +12,24 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface UserService extends IService<User> {
     /**
-     * @param username     用户名
+     * @param userAccount    用户名
      * @param userPassword 用户密码
      * @param userPhone    用户手机号
      * @return 返回用户id
      * @author Rico
      */
-    long userRegister(String username, String userPassword, String userCheckPassword, String userPhone);
+    long userRegister(String userAccount, String userPassword, String userCheckPassword, String userPhone);
 
     /**
      * 用户登录功能实现
      *
-     * @param username
+     * @param userAccount
      * @param userPassword
      * @param request
      * @return
      * @author Rico
      */
-    User userLogin(String username, String userPassword, HttpServletRequest request);
+    User userLogin(String userAccount, String userPassword, HttpServletRequest request);
 
     /**
      * 用户登出功能实现

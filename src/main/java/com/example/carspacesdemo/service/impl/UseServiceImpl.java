@@ -69,8 +69,7 @@ public class UseServiceImpl extends ServiceImpl<UserMapper, User>
             throw new BusinessException(ErrorCode.ERROR_PARAM, "账户重复了");
         }
         // 加密
-        String encryptPassword = DigestUtils.md5DigestAsHex((SALT +
-                userPassword).getBytes());
+        String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
         // 插⼊数据
         User user = new User();
         user.setUserAccount(userAccount);

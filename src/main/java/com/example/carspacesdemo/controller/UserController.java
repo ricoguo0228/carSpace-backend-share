@@ -24,7 +24,7 @@ import static com.example.carspacesdemo.constant.UserConstants.*;
  * @author Rico
  */
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 public class UserController {
     @Resource
     private UserService userService;

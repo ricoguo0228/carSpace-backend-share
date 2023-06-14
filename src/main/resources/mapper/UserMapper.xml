@@ -6,7 +6,7 @@
 
     <resultMap id="BaseResultMap" type="com.example.carspacesdemo.model.entity.User">
             <id property="userId" column="user_id" jdbcType="BIGINT"/>
-            <result property="userAccount" column="username" jdbcType="VARCHAR"/>
+            <result property="userAccount" column="user_account" jdbcType="VARCHAR"/>
             <result property="userPassword" column="user_password" jdbcType="VARCHAR"/>
             <result property="userPhone" column="user_phone" jdbcType="VARCHAR"/>
             <result property="userRole" column="user_role" jdbcType="TINYINT"/>
