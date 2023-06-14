@@ -7,7 +7,7 @@ import lombok.Data;
  */
 @Data
 public class UserUpdatePhoneRequest {
-    String username;
+    String userAccount;
     String userPassword;
     String userNewPhone;
 }

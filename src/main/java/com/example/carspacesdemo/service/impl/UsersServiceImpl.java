@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.example.carspacesdemo.constant.UsersConstants.*;
+import static com.example.carspacesdemo.constant.UserConstants.*;
 
 /**
  * @author Rico
@@ -105,7 +105,7 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
         // 寻找账户
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("userAccount", userAccount);
+        queryWrapper.eq("user_account", userAccount);
         queryWrapper.eq("user_password", encryptPassword);
         User user = usersMapper.selectOne(queryWrapper);
         if (user == null) {
@@ -122,6 +122,10 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public boolean userLogout(HttpServletRequest request) {
+        if (request.getSession().getAttribute(USER_LOGIN_STATE) == null) {
+            throw new BusinessException(ErrorCode.LOGIN_ERROR, "未登录");
+        }
+        // 移除登录态
         request.getSession().removeAttribute(USER_LOGIN_STATE);
         return true;
     }
@@ -147,8 +151,8 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
         String encryptNewPassword = DigestUtils.md5DigestAsHex((SALT + userNewPassword).getBytes());
         // 寻找账户
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("userAccount", userAccount);
-        queryWrapper.eq("userPhone", userPhone);
+        queryWrapper.eq("user_account", userAccount);
+        queryWrapper.eq("user_phone", userPhone);
         User user = usersMapper.selectOne(queryWrapper);
         if (user == null) {
             log.info("findPassword failed because user is null");
@@ -186,8 +190,8 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
         }
         // 寻找账户
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("userAccount", userAccount);
-        queryWrapper.eq("userPassword", userPassword);
+        queryWrapper.eq("user_account", userAccount);
+        queryWrapper.eq("user_password", userPassword);
         User user = usersMapper.selectOne(queryWrapper);
         if (user == null) {
             log.info("findPassword failed because user is null");
@@ -212,7 +216,7 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
         }
         // 寻找账户
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("userAccount", userAccount);
+        queryWrapper.eq("user_account", userAccount);
         User user = usersMapper.selectOne(queryWrapper);
         if (user == null) {
             log.info("findPassword failed because user is null");

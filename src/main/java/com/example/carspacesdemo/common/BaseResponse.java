@@ -1,10 +1,15 @@
 package com.example.carspacesdemo.common;
 
-public class BaseResponse<T> {
-    public int code;
-    T data;
-    public String message;
-    public String description;
+import lombok.Data;
+
+import java.io.Serializable;
+
+@Data
+public class BaseResponse<T> implements Serializable {
+    private int code;
+    private T data;
+    private String message;
+    private String description;
 
     public BaseResponse(int code, T data, String message, String description) {
         this.code = code;

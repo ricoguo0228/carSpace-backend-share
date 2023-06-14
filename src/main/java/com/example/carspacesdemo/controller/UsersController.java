@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
 import static com.example.carspacesdemo.common.ResultUtils.success;
-import static com.example.carspacesdemo.constant.UsersConstants.*;
+import static com.example.carspacesdemo.constant.UserConstants.*;
 
 /**
  * 用户服务接口
@@ -53,14 +53,14 @@ public class UsersController {
         if (userRegisterRequest == null) {
             return null;
         }
-        String username = userRegisterRequest.getUsername();
+        String userAccount = userRegisterRequest.getUserAccount();
         String userPassword = userRegisterRequest.getUserPassword();
         String userCheckPassword = userRegisterRequest.getUserCheckPassword();
         String userPhone = userRegisterRequest.getUserPhone();
-        if (StringUtils.isAnyBlank(username, userPassword, userPhone)) {
+        if (StringUtils.isAnyBlank(userAccount, userPassword, userPhone)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
-        long id = usersService.userRegister(username, userPassword, userCheckPassword, userPhone);
+        long id = usersService.userRegister(userAccount, userPassword, userCheckPassword, userPhone);
         return success(id);
     }
 
@@ -69,18 +69,18 @@ public class UsersController {
         if (userLoginRequest == null) {
             return null;
         }
-        String username = userLoginRequest.getUsername();
+        String userAccount = userLoginRequest.getUserAccount();
         String userPassword = userLoginRequest.getUserPassword();
-        if (StringUtils.isAnyBlank(username, userPassword)) {
+        if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
-        User user = usersService.userLogin(username, userPassword, httpServletRequest);
+        User user = usersService.userLogin(userAccount, userPassword, httpServletRequest);
         return success(user);
     }
 
     @PostMapping("/logout")
-    private BaseResponse<Boolean> userLogout(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest httpServletRequest) {
-        if (userLoginRequest == null) {
+    private BaseResponse<Boolean> userLogout( HttpServletRequest httpServletRequest) {
+        if (httpServletRequest == null) {
             return null;
         }
         if(usersService.userLogout(httpServletRequest)){
@@ -104,13 +104,13 @@ public class UsersController {
         if (userUpdatePasswordRequest == null) {
             return null;
         }
-        String username = userUpdatePasswordRequest.getUsername();
+        String userAccount = userUpdatePasswordRequest.getUserAccount();
         String userNewPassword = userUpdatePasswordRequest.getUserNewPassword();
         String userPhone = userUpdatePasswordRequest.getUserPhone();
-        if (StringUtils.isAnyBlank(username, userNewPassword, userPhone)) {
+        if (StringUtils.isAnyBlank(userAccount, userNewPassword, userPhone)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
-        boolean res = usersService.userUpdatePassword(username, userNewPassword, userPhone);
+        boolean res = usersService.userUpdatePassword(userAccount, userNewPassword, userPhone);
         return success(res);
     }
 
@@ -119,12 +119,12 @@ public class UsersController {
         if (userUpdateNickNameRequest == null) {
             return null;
         }
-        String username = userUpdateNickNameRequest.getUsername();
+        String userAccount = userUpdateNickNameRequest.getUserAccount();
         String nickName = userUpdateNickNameRequest.getNickName();
-        if (StringUtils.isAnyBlank(username, nickName)) {
+        if (StringUtils.isAnyBlank(userAccount, nickName)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
-        User user = usersService.userUpdateNickName(username, nickName);
+        User user = usersService.userUpdateNickName(userAccount, nickName);
         return success(user);
     }
 
@@ -133,13 +133,13 @@ public class UsersController {
         if (userUpdatePhoneRequest == null) {
             return null;
         }
-        String username = userUpdatePhoneRequest.getUsername();
+        String userAccount = userUpdatePhoneRequest.getUserAccount();
         String userPassword = userUpdatePhoneRequest.getUserPassword();
         String userPhone = userUpdatePhoneRequest.getUserNewPhone();
-        if (StringUtils.isAnyBlank(username, userPassword, userPhone)) {
+        if (StringUtils.isAnyBlank(userAccount, userPassword, userPhone)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
-        User user = usersService.userUpdatePhone(username, userPassword, userPhone);
+        User user = usersService.userUpdatePhone(userAccount, userPassword, userPhone);
         return success(user);
     }
 

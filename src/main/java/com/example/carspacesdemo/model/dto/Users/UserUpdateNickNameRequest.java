@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class UserUpdateNickNameRequest {
-    private String username;
+    private String userAccount;
     private String nickName;
 }

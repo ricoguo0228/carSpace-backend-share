@@ -1,6 +1,6 @@
 package com.example.carspacesdemo.constant;
 
-public interface UsersConstants {
+public interface UserConstants {
     String USER_LOGIN_STATE="userloginstate";
     /**
      * 默认权限

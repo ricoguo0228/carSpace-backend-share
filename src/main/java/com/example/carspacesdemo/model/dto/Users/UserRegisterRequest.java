@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class UserRegisterRequest implements Serializable {
 
     private static final long serialVersionUID = -150010351605082849L;
-    public String username;
+    public String userAccount;
     public String userPassword;
     public String userCheckPassword;
     public String userPhone;
