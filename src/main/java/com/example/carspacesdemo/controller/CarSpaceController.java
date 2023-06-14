@@ -4,6 +4,7 @@ import com.example.carspacesdemo.common.BaseResponse;
 import com.example.carspacesdemo.common.IdRequest;
 import com.example.carspacesdemo.common.ErrorCode;
 import com.example.carspacesdemo.exception.BusinessException;
+import com.example.carspacesdemo.model.dto.carspacesinfo.CarSpaceUpdateRequest;
 import com.example.carspacesdemo.model.entity.ComplCarspace;
 import com.example.carspacesdemo.model.dto.carspacesinfo.CarSpaceCreateRequest;
 import com.example.carspacesdemo.model.entity.User;
@@ -56,12 +57,21 @@ public class CarSpaceController {
         return success(carSpacesService.removeById(id));
     }
     @PostMapping("/update")
-    private BaseResponse carSpaceUpdate(@RequestBody IdRequest idRequest) {
-        Long id = idRequest.getId();
-        if(id <= 0){
-            throw new BusinessException(ErrorCode.ERROR_PARAM,"车辆id不可以为空");
+    private BaseResponse carSpaceUpdate(@RequestBody CarSpaceUpdateRequest updateRequest, HttpServletRequest httpServletRequest) {
+        if(updateRequest == null){
+            return null;
         }
-        return success(carSpacesService.removeById(id));
+        long carId = updateRequest.getCarId();
+        String location = updateRequest.getLocation();
+        int price = updateRequest.getPrice();
+        LocalDateTime startDate = updateRequest.getStartTime();
+        LocalDateTime endDate = updateRequest.getEndTime();
+        String imageUrl = updateRequest.getImageUrl();
+        //获取用户id
+        User user = (User)httpServletRequest.getSession().getAttribute(USER_LOGIN_STATE);
+        long ownerId = user.getUserId();
+        boolean res = carSpacesService.carSpaceUpdate(carId, location, price, imageUrl, startDate, endDate, ownerId);
+        return success(res);
     }
     @PostMapping("/publish")
     private BaseResponse carSpacePublish(@RequestBody IdRequest idRequest) {

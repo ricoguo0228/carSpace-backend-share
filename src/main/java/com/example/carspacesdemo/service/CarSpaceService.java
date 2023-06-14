@@ -16,7 +16,6 @@ public interface CarSpaceService extends IService<Carspace> {
     /**
      * 创建新车位
      *
-     * @param userId
      * @param location
      * @param price
      * @param imageUrl
@@ -25,7 +24,7 @@ public interface CarSpaceService extends IService<Carspace> {
      * @return
      * @author Rico
      */
-    long carSpaceCreate(long userId, String location, int price, String imageUrl, LocalDateTime startTime, LocalDateTime endTime);
+    long carSpaceCreate(long ownerId, String location, int price, String imageUrl, LocalDateTime startTime, LocalDateTime endTime);
 
     /**
      * 更新车位信息
@@ -38,7 +37,7 @@ public interface CarSpaceService extends IService<Carspace> {
      * @param endTime
      * @return
      */
-    boolean carSpaceUpdate(long carId, String location, int price, String imageUrl, LocalDateTime startTime, LocalDateTime endTime);
+    boolean carSpaceUpdate(long carId, String location, int price, String imageUrl, LocalDateTime startTime, LocalDateTime endTime,long ownerId);
 
     /**
      * 车位发布
