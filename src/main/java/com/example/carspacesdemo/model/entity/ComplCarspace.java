@@ -15,14 +15,14 @@ public class ComplCarspace {
         this.carspace = carspace;
         this.slots = slots;
         this.phoneNumber = user.getUserPhone();
-        this.ownerName = user.getUsername();
+        this.ownerName = user.getUserAccount();
         this.reserveStatus = reserveStatus;
     }
     public ComplCarspace(Carspace carspace, Map<Date, Date> slots,User user) {
         this.carspace = carspace;
         this.slots = slots;
         this.phoneNumber = user.getUserPhone();
-        this.ownerName = user.getUsername();
+        this.ownerName = user.getUserAccount();
         this.reserveStatus = reserveStatus;
     }
 
