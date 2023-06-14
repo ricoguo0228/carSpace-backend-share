@@ -1,7 +1,7 @@
 package com.example.carspacesdemo.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.carspacesdemo.model.Reservation;
+import com.example.carspacesdemo.model.entity.Reservation;
 
 /**
 * @author Rico

@@ -1,8 +1,5 @@
 package com.example.carspacesdemo.utils;
 
-import com.example.carspacesdemo.model.Carspace;
-import com.example.carspacesdemo.model.User;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

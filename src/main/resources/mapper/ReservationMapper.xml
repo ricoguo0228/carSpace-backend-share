@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.carspacesdemo.mapper.ReservationMapper">
 
-    <resultMap id="BaseResultMap" type="com.example.carspacesdemo.model.Reservation">
+    <resultMap id="BaseResultMap" type="com.example.carspacesdemo.model.entity.Reservation">
             <id property="reserveId" column="reserve_id" jdbcType="BIGINT"/>
             <result property="reserverId" column="reserver_id" jdbcType="BIGINT"/>
             <result property="carId" column="car_id" jdbcType="BIGINT"/>

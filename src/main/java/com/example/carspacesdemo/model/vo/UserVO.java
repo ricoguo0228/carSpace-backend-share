@@ -1,4 +1,4 @@
-package com.example.carspacesdemo.model;
+package com.example.carspacesdemo.model.vo;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
@@ -7,27 +7,19 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 用户
- * @TableName user
+ * 用户视图(脱敏）
  */
-@TableName(value ="user")
 @Data
-public class User implements Serializable {
+public class UserVO implements Serializable {
     /**
      * 用户id
      */
-    @TableId(type = IdType.AUTO)
     private Long userId;
 
     /**
-     * 用户名
+     * 账户
      */
-    private String username;
-
-    /**
-     * 用户密码
-     */
-    private String userPassword;
+    private String userAccount;
 
     /**
      * 用户手机号
@@ -45,20 +37,9 @@ public class User implements Serializable {
     private Integer userCredit;
 
     /**
-     * 逻辑删除 0-未删除 1-已删除
-     */
-    @TableLogic
-    private Integer isDelete;
-
-    /**
      * 插入时间
      */
     private Date insertTime;
-
-    /**
-     * 信息更新时间
-     */
-    private Date updateTime;
 
     /**
      * 昵称

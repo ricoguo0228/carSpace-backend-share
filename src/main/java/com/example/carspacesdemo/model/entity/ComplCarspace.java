@@ -1,5 +1,7 @@
-package com.example.carspacesdemo.model;
+package com.example.carspacesdemo.model.entity;
 
+import com.example.carspacesdemo.model.entity.Carspace;
+import com.example.carspacesdemo.model.entity.User;
 import lombok.Data;
 
 import java.util.Date;
@@ -9,7 +11,7 @@ import java.util.Map;
 public class ComplCarspace {
     private Carspace carspace;
 
-    public ComplCarspace(Carspace carspace, Map<Date, Date> slots,User user,int reserveStatus) {
+    public ComplCarspace(Carspace carspace, Map<Date, Date> slots, User user, int reserveStatus) {
         this.carspace = carspace;
         this.slots = slots;
         this.phoneNumber = user.getUserPhone();

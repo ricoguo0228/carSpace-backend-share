@@ -1,4 +1,4 @@
-package com.example.carspacesdemo.model.request.CarSpacesInfo;
+package com.example.carspacesdemo.model.dto.carspacesinfo;
 
 import lombok.Data;
 

@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.carspacesdemo.common.ErrorCode;
 import com.example.carspacesdemo.exception.BusinessException;
 import com.example.carspacesdemo.mapper.UserMapper;
-import com.example.carspacesdemo.model.User;
+import com.example.carspacesdemo.model.entity.User;
 import com.example.carspacesdemo.service.UsersService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,14 +38,14 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
     private UserMapper usersMapper;
 
     @Override
-    public long userRegister(String username, String userPassword, String userCheckPassword, String userPhone) {
-        if (StringUtils.isAnyBlank(username, userPassword, userPhone)) {
+    public long userRegister(String userAccount, String userPassword, String userCheckPassword, String userPhone) {
+        if (StringUtils.isAnyBlank(userAccount, userPassword, userPhone)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
         if(!userPassword.equals(userCheckPassword)){
             throw new BusinessException(ErrorCode.ERROR_PARAM, "两次输入的密码不一致");
         }
-        if (username.length() < 4) {
+        if (userAccount.length() < 4) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "用户名不可以小于4");
         }
         if (userPassword.length() < 8) {
@@ -57,13 +57,13 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
         // 账户不能包含特殊字符
         String validPattern = "[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
         ;
-        Matcher matcher = Pattern.compile(validPattern).matcher(username);
+        Matcher matcher = Pattern.compile(validPattern).matcher(userAccount);
         if (matcher.find()) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "账户不能包含特殊字符");
         }
         // 账户不能重复
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username", username);
+        queryWrapper.eq("user_account", userAccount);
         long count = usersMapper.selectCount(queryWrapper);
         if (count > 0) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "账户重复了");
@@ -73,7 +73,7 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
                 userPassword).getBytes());
         // 插⼊数据
         User user = new User();
-        user.setUsername(username);
+        user.setUserAccount(userAccount);
         user.setUserPassword(encryptPassword);
         user.setUserPhone(userPhone);
         boolean saveResult = this.save(user);
@@ -84,11 +84,11 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public User userLogin(String username, String userPassword, HttpServletRequest request) {
-        if (StringUtils.isAnyBlank(username, userPassword)) {
+    public User userLogin(String userAccount, String userPassword, HttpServletRequest request) {
+        if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
-        if (username.length() < 4) {
+        if (userAccount.length() < 4) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "用户名不可以小于4");
         }
         if (userPassword.length() < 8) {
@@ -97,7 +97,7 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
         // 账户不能包含特殊字符
         String validPattern = "[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
         ;
-        Matcher matcher = Pattern.compile(validPattern).matcher(username);
+        Matcher matcher = Pattern.compile(validPattern).matcher(userAccount);
         if (matcher.find()) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "账户重复了");
         }
@@ -105,7 +105,7 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
         // 寻找账户
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username", username);
+        queryWrapper.eq("userAccount", userAccount);
         queryWrapper.eq("user_password", encryptPassword);
         User user = usersMapper.selectOne(queryWrapper);
         if (user == null) {
@@ -127,11 +127,11 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public boolean userUpdatePassword(String username, String userNewPassword, String userPhone) {
-        if (StringUtils.isAnyBlank(username, userNewPassword, userPhone)) {
+    public boolean userUpdatePassword(String userAccount, String userNewPassword, String userPhone) {
+        if (StringUtils.isAnyBlank(userAccount, userNewPassword, userPhone)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
-        if (username.length() < 4) {
+        if (userAccount.length() < 4) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "用户名不可以小于4");
         }
         if(!userNewPassword.equals(userPhone)){
@@ -139,7 +139,7 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
         }
         // 账户不能包含特殊字符
         String validPattern = "[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
-        Matcher matcher = Pattern.compile(validPattern).matcher(username);
+        Matcher matcher = Pattern.compile(validPattern).matcher(userAccount);
         if (matcher.find()) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "账户不能包含特殊字符");
         }
@@ -147,7 +147,7 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
         String encryptNewPassword = DigestUtils.md5DigestAsHex((SALT + userNewPassword).getBytes());
         // 寻找账户
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username", username);
+        queryWrapper.eq("userAccount", userAccount);
         queryWrapper.eq("userPhone", userPhone);
         User user = usersMapper.selectOne(queryWrapper);
         if (user == null) {
@@ -165,11 +165,11 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public User userUpdatePhone(String username, String userPassword,String userNewPhone) {
-        if (StringUtils.isAnyBlank(username,userPassword,userNewPhone)) {
+    public User userUpdatePhone(String userAccount, String userPassword,String userNewPhone) {
+        if (StringUtils.isAnyBlank(userAccount,userPassword,userNewPhone)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
-        if (username.length() < 4) {
+        if (userAccount.length() < 4) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "用户名不可以小于4");
         }
         if (userPassword.length() < 8) {
@@ -180,13 +180,13 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
         }
         // 账户不能包含特殊字符
         String validPattern = "[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
-        Matcher matcher = Pattern.compile(validPattern).matcher(username);
+        Matcher matcher = Pattern.compile(validPattern).matcher(userAccount);
         if (matcher.find()) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "账户不能包含特殊字符");
         }
         // 寻找账户
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username", username);
+        queryWrapper.eq("userAccount", userAccount);
         queryWrapper.eq("userPassword", userPassword);
         User user = usersMapper.selectOne(queryWrapper);
         if (user == null) {
@@ -203,16 +203,16 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public User userUpdateNickName(String username, String NewNickName) {
-        if (StringUtils.isAnyBlank(username,NewNickName)) {
+    public User userUpdateNickName(String userAccount, String NewNickName) {
+        if (StringUtils.isAnyBlank(userAccount,NewNickName)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
-        if (username.length() < 4) {
+        if (userAccount.length() < 4) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "用户名不可以小于4");
         }
         // 寻找账户
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username", username);
+        queryWrapper.eq("userAccount", userAccount);
         User user = usersMapper.selectOne(queryWrapper);
         if (user == null) {
             log.info("findPassword failed because user is null");
@@ -239,7 +239,7 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
         //用户脱敏
         User safetyuser = new User();
         safetyuser.setUserId(originUser.getUserId());
-        safetyuser.setUsername(originUser.getUsername());
+        safetyuser.setUserAccount(originUser.getUserAccount());
         safetyuser.setUserPhone(originUser.getUserPhone());
         safetyuser.setInsertTime(originUser.getInsertTime());
         safetyuser.setUserRole(originUser.getUserRole());

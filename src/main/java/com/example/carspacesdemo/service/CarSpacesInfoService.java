@@ -1,9 +1,8 @@
 package com.example.carspacesdemo.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.carspacesdemo.model.Carspace;
-import com.example.carspacesdemo.model.ComplCarspace;
-import com.example.carspacesdemo.model.User;
+import com.example.carspacesdemo.model.entity.Carspace;
+import com.example.carspacesdemo.model.entity.ComplCarspace;
 
 import java.util.Date;
 import java.util.List;

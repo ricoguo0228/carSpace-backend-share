@@ -3,8 +3,8 @@ package com.example.carspacesdemo.controller;
 import com.example.carspacesdemo.common.BaseResponse;
 import com.example.carspacesdemo.common.ErrorCode;
 import com.example.carspacesdemo.exception.BusinessException;
-import com.example.carspacesdemo.model.*;
-import com.example.carspacesdemo.model.request.Users.*;
+import com.example.carspacesdemo.model.dto.Users.*;
+import com.example.carspacesdemo.model.entity.User;
 import com.example.carspacesdemo.service.*;
 
 import javax.servlet.http.HttpServletRequest;

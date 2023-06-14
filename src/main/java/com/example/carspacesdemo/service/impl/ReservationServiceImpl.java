@@ -2,7 +2,7 @@ package com.example.carspacesdemo.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.carspacesdemo.mapper.ReservationMapper;
-import com.example.carspacesdemo.model.Reservation;
+import com.example.carspacesdemo.model.entity.Reservation;
 import com.example.carspacesdemo.service.ReservationService;
 import org.springframework.stereotype.Service;
 

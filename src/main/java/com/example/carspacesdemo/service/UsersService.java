@@ -1,7 +1,7 @@
 package com.example.carspacesdemo.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.carspacesdemo.model.User;
+import com.example.carspacesdemo.model.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
 

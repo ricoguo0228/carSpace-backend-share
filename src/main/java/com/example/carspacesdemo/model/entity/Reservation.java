@@ -1,4 +1,4 @@
-package com.example.carspacesdemo.model;
+package com.example.carspacesdemo.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
