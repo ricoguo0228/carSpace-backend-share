@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 用户
@@ -53,12 +53,12 @@ public class User implements Serializable {
     /**
      * 插入时间
      */
-    private Date insertTime;
+    private LocalDateTime insertTime;
 
     /**
      * 信息更新时间
      */
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
     /**
      * 昵称

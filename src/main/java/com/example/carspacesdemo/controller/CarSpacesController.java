@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.example.carspacesdemo.common.ResultUtils.success;
@@ -31,8 +32,8 @@ public class CarSpacesController {
         }
         String location = carSpacesCreateRequest.getLocation();
         int price = carSpacesCreateRequest.getPrice();
-        Date startDate = carSpacesCreateRequest.getStartDate();
-        Date endDate = carSpacesCreateRequest.getEndDate();
+        LocalDateTime startDate = carSpacesCreateRequest.getStartDate();
+        LocalDateTime endDate = carSpacesCreateRequest.getEndDate();
         String imageUrl = carSpacesCreateRequest.getImageUrl();
         if (StringUtils.isAnyBlank(location)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM,"参数不可以为空");

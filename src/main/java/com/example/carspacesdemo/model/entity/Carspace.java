@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 用户创建的车位表
@@ -42,7 +42,7 @@ public class Carspace implements Serializable {
     /**
      * 车位创建时间
      */
-    private Date insertTime;
+    private LocalDateTime insertTime;
 
     /**
      * 逻辑删除 0-未删除 1-已删除
@@ -53,17 +53,17 @@ public class Carspace implements Serializable {
     /**
      * 车位更新时间
      */
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
     /**
      * 车位预定的开始时间
      */
-    private Date startTime;
+    private LocalDateTime startTime;
 
     /**
      * 车位预定的结束时间
      */
-    private Date endTime;
+    private LocalDateTime endTime;
 
     /**
      * 车位拥有者

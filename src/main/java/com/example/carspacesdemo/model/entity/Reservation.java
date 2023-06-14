@@ -6,7 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
+
 
 /**
  * 预约表
@@ -39,12 +40,12 @@ public class Reservation implements Serializable {
     /**
      * 预约开始时间
      */
-    private Date reserveStartTime;
+    private LocalDateTime reserveStartTime;
 
     /**
      * 预约结束时间
      */
-    private Date reserveEndTime;
+    private LocalDateTime reserveEndTime;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

@@ -16,7 +16,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
 * @author Rico
@@ -33,7 +37,7 @@ public class CarSpacesInfoServiceImpl extends ServiceImpl<CarspaceMapper, Carspa
     @Resource
     UserMapper userMapper;
     @Override
-    public long carSpaceCreate(String location, int price, String imageUrl, Date startTime, Date endTime) {
+    public long carSpaceCreate(String location, int price, String imageUrl, LocalDateTime startTime, LocalDateTime endTime) {
         if(StringUtils.isAnyBlank(location)){
             throw new BusinessException(ErrorCode.ERROR_PARAM,"位置信息不能为空");
         }
@@ -54,7 +58,7 @@ public class CarSpacesInfoServiceImpl extends ServiceImpl<CarspaceMapper, Carspa
     }
 
     @Override
-    public boolean carSpaceUpdate(long carId, String location, int price, String imageUrl, Date startTime, Date endTime) {
+    public boolean carSpaceUpdate(long carId, String location, int price, String imageUrl, LocalDateTime startTime, LocalDateTime endTime) {
         if(StringUtils.isAnyBlank(location)){
             throw new BusinessException(ErrorCode.ERROR_PARAM,"位置信息不能为空");
         }
@@ -135,24 +139,24 @@ public class CarSpacesInfoServiceImpl extends ServiceImpl<CarspaceMapper, Carspa
     public List<ComplCarspace> getComplCarspacesByList(List<Carspace> carspaces) {
         List<ComplCarspace> complCarspaces = new ArrayList<>();
         for(Carspace carSpace : carspaces){
-            Date startTime = carSpace.getStartTime();
-            Date endTime = carSpace.getEndTime();
+            LocalDateTime startTime = carSpace.getStartTime();
+            LocalDateTime endTime = carSpace.getEndTime();
             QueryWrapper<Reservation> queryWrapper = new QueryWrapper<Reservation>();
             queryWrapper.eq("car_id",carSpace.getCarId());
             queryWrapper.eq("reserve_status",0);
             List<Reservation> reservations = reservationMapper.selectList(queryWrapper);
-            Map<Date,Date> reserveSlots = new HashMap<Date,Date>();
+            Map<LocalDateTime,LocalDateTime> reserveSlots = new HashMap<LocalDateTime,LocalDateTime>();
             int reserveStatus = -1;
             for(Reservation reservation : reservations){
                 reserveSlots.put(reservation.getReserveStartTime(),reservation.getReserveEndTime());
                 reserveStatus = reservation.getReserveStatus();
             }
-            Map<Date, Date> availableSlots = new HashMap<>();
-            for(Date left : reserveSlots.keySet()){
-                if(left.after(startTime) && left.before(endTime)){
+            Map<LocalDateTime, LocalDateTime> availableSlots = new HashMap<>();
+            for(LocalDateTime left : reserveSlots.keySet()){
+                if(left.isAfter(startTime) && left.isBefore(endTime)){
                     availableSlots.put(startTime, left);
                 }
-                if(reserveSlots.get(left).after(startTime) && reserveSlots.get(left).before(endTime)){
+                if(reserveSlots.get(left).isAfter(startTime) && reserveSlots.get(left).isBefore(endTime)){
                     availableSlots.put(reserveSlots.get(left), endTime);
                 }
             }
@@ -167,24 +171,24 @@ public class CarSpacesInfoServiceImpl extends ServiceImpl<CarspaceMapper, Carspa
         List<ComplCarspace> complCarspaces = new ArrayList<>();
         for(long CarId : CarIds){
             Carspace carSpace = carSpacesMapper.selectById(CarId);
-            Date startTime = carSpace.getStartTime();
-            Date endTime = carSpace.getEndTime();
+            LocalDateTime startTime = carSpace.getStartTime();
+            LocalDateTime endTime = carSpace.getEndTime();
             QueryWrapper<Reservation> queryWrapper = new QueryWrapper<Reservation>();
             queryWrapper.eq("car_id",carSpace.getCarId());
             queryWrapper.eq("reserve_status",0);
             List<Reservation> reservations = reservationMapper.selectList(queryWrapper);
-            Map<Date,Date> reserveSlots = new HashMap<Date,Date>();
+            Map<LocalDateTime,LocalDateTime> reserveSlots = new HashMap<LocalDateTime,LocalDateTime>();
             int reserveStatus = -1;
             for(Reservation reservation : reservations){
                 reserveSlots.put(reservation.getReserveStartTime(),reservation.getReserveEndTime());
                 reserveStatus = reservation.getReserveStatus();
             }
-            Map<Date, Date> availableSlots = new HashMap<>();
-            for(Date left : reserveSlots.keySet()){
-                if(left.after(startTime) && left.before(endTime)){
+            Map<LocalDateTime, LocalDateTime> availableSlots = new HashMap<>();
+            for(LocalDateTime left : reserveSlots.keySet()){
+                if(left.isAfter(startTime) && left.isBefore(endTime)){
                     availableSlots.put(startTime, left);
                 }
-                if(reserveSlots.get(left).after(startTime) && reserveSlots.get(left).before(endTime)){
+                if(reserveSlots.get(left).isAfter(startTime) && reserveSlots.get(left).isBefore(endTime)){
                     availableSlots.put(reserveSlots.get(left), endTime);
                 }
             }
