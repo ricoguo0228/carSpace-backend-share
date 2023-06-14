@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.carspacesdemo.model.entity.Carspace;
 import com.example.carspacesdemo.model.entity.ComplCarspace;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,7 +12,7 @@ import java.util.List;
  * @description 针对表【carspaces(用户创建的车位表)】的数据库操作Service
  * @createDate 2023-06-09 17:28:31
  */
-public interface CarSpacesInfoService extends IService<Carspace> {
+public interface CarSpaceService extends IService<Carspace> {
     /**
      * 创建新车位
      *
@@ -69,18 +67,18 @@ public interface CarSpacesInfoService extends IService<Carspace> {
     /**
      * 获取用户创建的所有车位
      *
-     * @param userId
+     * @param ownerId
      * @return
      */
-    List<ComplCarspace> getUserCarSpaces(long userId);
+    List<ComplCarspace> getUserCarSpaces(long ownerId);
 
     /***
      * 获取用户预定的车位
      *
-     * @param userId
+     * @param reserverId
      * @return
      */
-    List<ComplCarspace> getReservedCarSpaces(long userId);
+    List<ComplCarspace> getReservedCarSpaces(long reserverId);
 
     /**
      * 获取可供返回显示信息的车位

@@ -25,9 +25,9 @@ import static com.example.carspacesdemo.constant.UserConstants.*;
  */
 @RestController
 @RequestMapping("/api/user")
-public class UsersController {
+public class UserController {
     @Resource
-    private UsersService usersService;
+    private UserService userService;
 
     /**
      * 获取当前用户
@@ -44,8 +44,8 @@ public class UsersController {
         }
         long userId = currentUser.getUserId();
         // TODO 校验用户是否合法
-        User user = usersService.getById(userId);
-        User safetyUser = usersService.getSafetyUser(user);
+        User user = userService.getById(userId);
+        User safetyUser = userService.getSafetyUser(user);
         return success(safetyUser);
     }
 
@@ -61,7 +61,7 @@ public class UsersController {
         if (StringUtils.isAnyBlank(userAccount, userPassword, userPhone)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
-        long id = usersService.userRegister(userAccount, userPassword, userCheckPassword, userPhone);
+        long id = userService.userRegister(userAccount, userPassword, userCheckPassword, userPhone);
         return success(id);
     }
 
@@ -75,7 +75,7 @@ public class UsersController {
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
-        User user = usersService.userLogin(userAccount, userPassword, httpServletRequest);
+        User user = userService.userLogin(userAccount, userPassword, httpServletRequest);
         return success(user);
     }
 
@@ -84,7 +84,7 @@ public class UsersController {
         if (httpServletRequest == null) {
             return null;
         }
-        if(usersService.userLogout(httpServletRequest)){
+        if(userService.userLogout(httpServletRequest)){
             return success(true);
         }
         throw new BusinessException(ErrorCode.SYSTEM_ERROR);
@@ -98,7 +98,7 @@ public class UsersController {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "id小于0");
         }
-        return success(usersService.removeById(id));
+        return success(userService.removeById(id));
     }
 
     @PostMapping("/updatePassword")
@@ -112,7 +112,7 @@ public class UsersController {
         if (StringUtils.isAnyBlank(userAccount, userNewPassword, userPhone)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
-        boolean res = usersService.userUpdatePassword(userAccount, userNewPassword, userPhone);
+        boolean res = userService.userUpdatePassword(userAccount, userNewPassword, userPhone);
         return success(res);
     }
 
@@ -126,7 +126,7 @@ public class UsersController {
         if (StringUtils.isAnyBlank(userAccount, nickName)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
-        User user = usersService.userUpdateNickName(userAccount, nickName);
+        User user = userService.userUpdateNickName(userAccount, nickName);
         return success(user);
     }
 
@@ -141,7 +141,7 @@ public class UsersController {
         if (StringUtils.isAnyBlank(userAccount, userPassword, userPhone)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
-        User user = usersService.userUpdatePhone(userAccount, userPassword, userPhone);
+        User user = userService.userUpdatePhone(userAccount, userPassword, userPhone);
         return success(user);
     }
 

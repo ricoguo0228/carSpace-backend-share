@@ -3,7 +3,6 @@ package com.example.carspacesdemo.model.dto.carspacesinfo;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.time.LocalDateTime;
 
 /**
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
  * @author Rico
  */
 @Data
-public class CarSpacesCreateRequest implements Serializable {
+public class CarSpaceCreateRequest implements Serializable {
     String location;
     int price;
     String imageUrl;

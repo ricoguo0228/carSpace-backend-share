@@ -6,7 +6,7 @@ import com.example.carspacesdemo.common.ErrorCode;
 import com.example.carspacesdemo.exception.BusinessException;
 import com.example.carspacesdemo.mapper.UserMapper;
 import com.example.carspacesdemo.model.entity.User;
-import com.example.carspacesdemo.service.UsersService;
+import com.example.carspacesdemo.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,8 +28,8 @@ import static com.example.carspacesdemo.constant.UserConstants.*;
  */
 @Slf4j
 @Service
-public class UsersServiceImpl extends ServiceImpl<UserMapper, User>
-        implements UsersService {
+public class UseServiceImpl extends ServiceImpl<UserMapper, User>
+        implements UserService {
     /**
      * 盐值，混淆密码
      */

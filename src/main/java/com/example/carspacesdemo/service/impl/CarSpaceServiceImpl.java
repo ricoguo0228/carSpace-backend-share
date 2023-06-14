@@ -11,19 +11,16 @@ import com.example.carspacesdemo.model.entity.Carspace;
 import com.example.carspacesdemo.model.entity.ComplCarspace;
 import com.example.carspacesdemo.model.entity.Reservation;
 import com.example.carspacesdemo.model.entity.User;
-import com.example.carspacesdemo.service.CarSpacesInfoService;
+import com.example.carspacesdemo.service.CarSpaceService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.example.carspacesdemo.constant.UserConstants.USER_LOGIN_STATE;
 
 /**
 * @author Rico
@@ -31,7 +28,7 @@ import static com.example.carspacesdemo.constant.UserConstants.USER_LOGIN_STATE;
 * @createDate 2023-06-09 17:28:31
 */
 @Service
-public class CarSpacesInfoServiceImpl extends ServiceImpl<CarspaceMapper, Carspace>  implements CarSpacesInfoService {
+public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace>  implements CarSpaceService {
 
     @Resource
     CarspaceMapper carSpacesMapper;
@@ -121,17 +118,17 @@ public class CarSpacesInfoServiceImpl extends ServiceImpl<CarspaceMapper, Carspa
     }
 
     @Override
-    public List<ComplCarspace> getUserCarSpaces(long userId) {
+    public List<ComplCarspace> getUserCarSpaces(long ownerId) {
         QueryWrapper<Carspace> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id",userId);
+        queryWrapper.eq("owner_id",ownerId);
         List<Carspace> carspaces = carSpacesMapper.selectList(queryWrapper);
         return getComplCarspacesByList(carspaces);
     }
 
     @Override
-    public List<ComplCarspace> getReservedCarSpaces(long userId) {
+    public List<ComplCarspace> getReservedCarSpaces(long reserverId) {
         QueryWrapper<Reservation> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("reserver_id",userId);
+        queryWrapper.eq("reserver_id",reserverId);
         List<Reservation> reservations = reservationMapper.selectList(queryWrapper);
         List<Long> CarIds = new ArrayList<>();
         for(Reservation reservation : reservations){

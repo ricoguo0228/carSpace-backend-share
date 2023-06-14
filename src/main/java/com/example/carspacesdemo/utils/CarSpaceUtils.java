@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CarSpacesUtils {
+public class CarSpaceUtils {
     public static Map<Date, Date> getSlots(Date startTime, Date endTime,Map<Date,Date> reserveSlots){
         Map<Date, Date> slots = new HashMap<Date, Date>();
         for(Date left : reserveSlots.keySet()){

@@ -5,9 +5,9 @@ import com.example.carspacesdemo.common.IdRequest;
 import com.example.carspacesdemo.common.ErrorCode;
 import com.example.carspacesdemo.exception.BusinessException;
 import com.example.carspacesdemo.model.entity.ComplCarspace;
-import com.example.carspacesdemo.model.dto.carspacesinfo.CarSpacesCreateRequest;
+import com.example.carspacesdemo.model.dto.carspacesinfo.CarSpaceCreateRequest;
 import com.example.carspacesdemo.model.entity.User;
-import com.example.carspacesdemo.service.CarSpacesInfoService;
+import com.example.carspacesdemo.service.CarSpaceService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,20 +24,20 @@ import static com.example.carspacesdemo.constant.UserConstants.USER_LOGIN_STATE;
 
 @RestController
 @RequestMapping("/carSpaces")
-public class CarSpacesController {
+public class CarSpaceController {
     @Resource
-    private CarSpacesInfoService carSpacesService;
+    private CarSpaceService carSpacesService;
 
     @PostMapping("/create")
-    private BaseResponse<Long> carSpaceCreate(@RequestBody CarSpacesCreateRequest carSpacesCreateRequest, HttpServletRequest httpServletRequest) {
-        if(carSpacesCreateRequest == null){
+    private BaseResponse<Long> carSpaceCreate(@RequestBody CarSpaceCreateRequest carSpaceCreateRequest, HttpServletRequest httpServletRequest) {
+        if(carSpaceCreateRequest == null){
             return null;
         }
-        String location = carSpacesCreateRequest.getLocation();
-        int price = carSpacesCreateRequest.getPrice();
-        LocalDateTime startDate = carSpacesCreateRequest.getStartDate();
-        LocalDateTime endDate = carSpacesCreateRequest.getEndDate();
-        String imageUrl = carSpacesCreateRequest.getImageUrl();
+        String location = carSpaceCreateRequest.getLocation();
+        int price = carSpaceCreateRequest.getPrice();
+        LocalDateTime startDate = carSpaceCreateRequest.getStartDate();
+        LocalDateTime endDate = carSpaceCreateRequest.getEndDate();
+        String imageUrl = carSpaceCreateRequest.getImageUrl();
         if (StringUtils.isAnyBlank(location)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM,"参数不可以为空");
         }
