@@ -3,21 +3,23 @@ package com.example.carspacesdemo.model.entity;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Data
 public class ComplCarspace {
-    private Carspace carspace;
-    public ComplCarspace(Carspace carspace, Map<LocalDateTime, LocalDateTime> slots,User user) {
+    public ComplCarspace(Carspace carspace,List<Ireserve> ireseres,User user) {
         this.carspace = carspace;
-        this.slots = slots;
+        this.ireseres = ireseres;
         this.phoneNumber = user.getUserPhone();
         this.ownerName = user.getUserAccount();
     }
-
+    public ComplCarspace(Carspace carspace,List<Ireserve> ireseres) {
+        this.carspace = carspace;
+        this.ireseres=ireseres;
+    }
+    private Carspace carspace;
+    private List<Ireserve> ireseres;
     private String phoneNumber;
     private String ownerName;
-    //用来区分可以预约的时间
-    private Map<LocalDateTime, LocalDateTime> slots;
-    //预约队列专用成员 0-正在预约 1-已经结束预约 -1-用不到
 }

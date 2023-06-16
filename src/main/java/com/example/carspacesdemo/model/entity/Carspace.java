@@ -16,7 +16,7 @@ public class Carspace implements Serializable {
     /**
      * 车位id
      */
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long carId;
 
     /**

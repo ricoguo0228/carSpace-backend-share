@@ -1,7 +1,10 @@
 package com.example.carspacesdemo.service;
 
-import com.example.carspacesdemo.model.entity.Ireserve;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.carspacesdemo.model.entity.Ireserve;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
 * @author Rico
@@ -9,5 +12,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2023-06-14 21:12:51
 */
 public interface IreserveService extends IService<Ireserve> {
+    boolean timeSlotInsert(long carId,LocalDateTime startTime, LocalDateTime endTime);
 
+    boolean timeSlotDelete(long iId);
+    List<Ireserve> listTimeSlots(long carId);
+    Ireserve getSafetyIreserve(Ireserve iReserve);
 }

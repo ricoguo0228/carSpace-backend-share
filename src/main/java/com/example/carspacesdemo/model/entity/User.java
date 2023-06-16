@@ -16,7 +16,7 @@ public class User implements Serializable {
     /**
      * 用户id
      */
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long userId;
 
     /**
@@ -64,6 +64,10 @@ public class User implements Serializable {
      * 昵称
      */
     private String nickName;
+    /**
+     * 头像
+     */
+    private String userAvatar;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

@@ -38,14 +38,19 @@ public class CarSpaceController {
         String location = createRequest.getLocation();
         int price = createRequest.getPrice();
         String imageUrl = createRequest.getImageUrl();
-        Map<LocalDateTime, LocalDateTime> timeSlots = createRequest.getTimeSlots();
+        List<LocalDateTime> timeSlots = createRequest.getTimeSlots();
+        LocalDateTime startTime = timeSlots.get(0);
+        LocalDateTime endTime = timeSlots.get(1);
+        if(startTime.isAfter(endTime)){
+            throw new BusinessException(ErrorCode.ERROR_PARAM,"开始时间不可以比结束时间晚");
+        }
         if (StringUtils.isAnyBlank(location)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
         //获取用户id
         User user = (User) httpServletRequest.getSession().getAttribute(USER_LOGIN_STATE);
         long userId = user.getUserId();
-        long CarId = carSpacesService.carSpaceCreate(userId, location, price, imageUrl, timeSlots);
+        long CarId = carSpacesService.carSpaceCreate(userId, location, price, imageUrl, startTime,endTime);
         return success(CarId);
     }
 
@@ -71,7 +76,7 @@ public class CarSpaceController {
         if (carId <= 0) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
         }
-        boolean res = carSpacesService.carSpaceUpdate(carId, location, price, imageUrl, timeSlots);
+        boolean res = carSpacesService.carSpaceUpdate(carId, location, price, imageUrl);
         return success(res);
     }
 
@@ -93,26 +98,26 @@ public class CarSpaceController {
         return success(carSpacesService.carSpaceInvoke(id));
     }
 
-    @PostMapping("/getCarSpaces")
-    public BaseResponse getCarSpaces(@RequestBody IdRequest idRequest) {
-        List<ComplCarspace> complCarSpaces = carSpacesService.getCarSpaces();
+    @PostMapping("/listCarSpaces")
+    public BaseResponse listCarSpaces() {
+        List<ComplCarspace> complCarSpaces = carSpacesService.listCarSpaces();
         return success(complCarSpaces);
     }
 
-    @PostMapping("/getUserCarSpaces")
-    public BaseResponse getUserSpaces(@RequestBody IdRequest idRequest) {
+    @PostMapping("/listUserCarSpaces")
+    public BaseResponse listUserSpaces(@RequestBody IdRequest idRequest) {
         long id = idRequest.getId();
         if (id <= 0) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
         }
-        List<ComplCarspace> complCarSpaces = carSpacesService.getUserCarSpaces(id);
+        List<ComplCarspace> complCarSpaces = carSpacesService.listUserCarSpaces(id);
         return success(complCarSpaces);
     }
 
-    @PostMapping("/getReservedCarSpaces")
-    public BaseResponse getReservedSpaces(@RequestBody IdRequest idRequest) {
+    @PostMapping("/listReservedCarSpaces")
+    public BaseResponse listReservedSpaces(@RequestBody IdRequest idRequest) {
         long id = idRequest.getId();
-        List<ComplCarspace> complCarSpaces = carSpacesService.getReservedCarSpaces(id);
+        List<ComplCarspace> complCarSpaces = carSpacesService.listReservedCarSpaces(id);
         return success(complCarSpaces);
     }
 }

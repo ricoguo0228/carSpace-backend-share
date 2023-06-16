@@ -5,6 +5,7 @@
 <mapper namespace="com.example.carspacesdemo.mapper.IreserveMapper">
 
     <resultMap id="BaseResultMap" type="com.example.carspacesdemo.model.entity.Ireserve">
+            <id property="iId" column="i_id" jdbcType="BIGINT"/>
             <result property="carId" column="car_id" jdbcType="BIGINT"/>
             <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
             <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
@@ -14,7 +15,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        car_id,start_time,end_time,
-        insert_time,is_delete,update_time
+        i_id,car_id,start_time,
+        end_time,insert_time,is_delete,
+        update_time
     </sql>
 </mapper>

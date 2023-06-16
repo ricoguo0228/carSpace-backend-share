@@ -177,6 +177,7 @@ public class UseServiceImpl extends ServiceImpl<UserMapper, User>
         safetyuser.setUserRole(originUser.getUserRole());
         safetyuser.setUserCredit(originUser.getUserCredit());
         safetyuser.setNickName(originUser.getNickName());
+        safetyuser.setUserAvatar(originUser.getUserAvatar());
         return safetyuser;
     }
 }

@@ -6,7 +6,6 @@ import com.example.carspacesdemo.model.entity.ComplCarspace;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Rico
@@ -23,7 +22,7 @@ public interface CarSpaceService extends IService<Carspace> {
      * @return
      * @author Rico
      */
-    long carSpaceCreate(long ownerId, String location, int price, String imageUrl, Map<LocalDateTime,LocalDateTime> TimeSlots);
+    long carSpaceCreate(long ownerId, String location, int price, String imageUrl, LocalDateTime startTime, LocalDateTime endTime);
 
     /**
      * 更新车位信息
@@ -34,7 +33,7 @@ public interface CarSpaceService extends IService<Carspace> {
      * @param imageUrl
      * @return
      */
-    boolean carSpaceUpdate(long carId, String location, int price, String imageUrl, Map<LocalDateTime,LocalDateTime> TimeSlots);
+    boolean carSpaceUpdate(long carId, String location, int price, String imageUrl);
 
     /**
      * 车位发布
@@ -58,7 +57,7 @@ public interface CarSpaceService extends IService<Carspace> {
      * @return
      * @author Rico
      */
-    List<ComplCarspace> getCarSpaces();
+    List<ComplCarspace> listCarSpaces();
 
     /**
      * 获取用户创建的所有车位
@@ -66,7 +65,7 @@ public interface CarSpaceService extends IService<Carspace> {
      * @param ownerId
      * @return
      */
-    List<ComplCarspace> getUserCarSpaces(long ownerId);
+    List<ComplCarspace> listUserCarSpaces(long ownerId);
 
     /***
      * 获取用户预定的车位
@@ -74,7 +73,7 @@ public interface CarSpaceService extends IService<Carspace> {
      * @param reserverId
      * @return
      */
-    List<ComplCarspace> getReservedCarSpaces(long reserverId);
+    List<ComplCarspace> listReservedCarSpaces(long reserverId);
 
     /**
      * 获取可供返回显示信息的车位
@@ -82,7 +81,7 @@ public interface CarSpaceService extends IService<Carspace> {
      * @param carspaces
      * @return
      */
-    List<ComplCarspace> getComplCarspacesByList(List<Carspace> carspaces);
+    List<ComplCarspace> listComplCarspacesByList(List<Carspace> carspaces);
 
     /**
      * 重载返回显示信息的车位函数
@@ -90,5 +89,7 @@ public interface CarSpaceService extends IService<Carspace> {
      * @param CarIds
      * @return
      */
-    List<ComplCarspace> getComplCarspacesByCarIds(List<Long> CarIds);
+    List<ComplCarspace> listComplCarspacesByCarIds(List<Long> CarIds);
+
+    ComplCarspace getSafetyComplCarSpace(ComplCarspace complCarspace);
 }
