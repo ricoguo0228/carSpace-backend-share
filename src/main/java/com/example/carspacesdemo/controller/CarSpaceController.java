@@ -5,15 +5,13 @@ import com.example.carspacesdemo.common.IdRequest;
 import com.example.carspacesdemo.common.ErrorCode;
 import com.example.carspacesdemo.exception.BusinessException;
 import com.example.carspacesdemo.model.dto.carspacesinfo.CarSpaceUpdateRequest;
+import com.example.carspacesdemo.model.entity.Carspace;
 import com.example.carspacesdemo.model.entity.ComplCarspace;
 import com.example.carspacesdemo.model.dto.carspacesinfo.CarSpaceCreateRequest;
 import com.example.carspacesdemo.model.entity.User;
 import com.example.carspacesdemo.service.CarSpaceService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +27,12 @@ import static com.example.carspacesdemo.constant.UserConstants.USER_LOGIN_STATE;
 public class CarSpaceController {
     @Resource
     private CarSpaceService carSpacesService;
+    @GetMapping("/current")
+    public BaseResponse<ComplCarspace> getCurrentCarSpace(@RequestBody IdRequest idRequest) {
+        Long id = idRequest.getId();
+        ComplCarspace carSpace = carSpacesService.getCurrentCarSpace(id);
+        return success(carSpace);
+    }
 
     @PostMapping("/create")
     private BaseResponse<Long> carSpaceCreate(@RequestBody CarSpaceCreateRequest createRequest, HttpServletRequest httpServletRequest) {
@@ -55,7 +59,7 @@ public class CarSpaceController {
     }
 
     @PostMapping("/delete")
-    private BaseResponse carSpaceDelete(@RequestBody IdRequest idRequest) {
+    private BaseResponse<Boolean> carSpaceDelete(@RequestBody IdRequest idRequest) {
         Long id = idRequest.getId();
         if (id <= 0) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
@@ -64,7 +68,7 @@ public class CarSpaceController {
     }
 
     @PostMapping("/update")
-    private BaseResponse carSpaceUpdate(@RequestBody CarSpaceUpdateRequest updateRequest, HttpServletRequest httpServletRequest) {
+    private BaseResponse<Boolean> carSpaceUpdate(@RequestBody CarSpaceUpdateRequest updateRequest, HttpServletRequest httpServletRequest) {
         if (updateRequest == null) {
             return null;
         }
@@ -81,7 +85,7 @@ public class CarSpaceController {
     }
 
     @PostMapping("/publish")
-    private BaseResponse carSpacePublish(@RequestBody IdRequest idRequest) {
+    private BaseResponse<Boolean> carSpacePublish(@RequestBody IdRequest idRequest) {
         Long id = idRequest.getId();
         if (id <= 0) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
@@ -90,7 +94,7 @@ public class CarSpaceController {
     }
 
     @PostMapping("/invoke")
-    private BaseResponse carSpaceInvoke(@RequestBody IdRequest idRequest) {
+    private BaseResponse<Boolean> carSpaceInvoke(@RequestBody IdRequest idRequest) {
         Long id = idRequest.getId();
         if (id <= 0) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
@@ -99,13 +103,13 @@ public class CarSpaceController {
     }
 
     @PostMapping("/listCarSpaces")
-    public BaseResponse listCarSpaces() {
+    public BaseResponse<List<ComplCarspace>> listCarSpaces() {
         List<ComplCarspace> complCarSpaces = carSpacesService.listCarSpaces();
         return success(complCarSpaces);
     }
 
     @PostMapping("/listUserCarSpaces")
-    public BaseResponse listUserSpaces(@RequestBody IdRequest idRequest) {
+    public BaseResponse<List<ComplCarspace>> listUserSpaces(@RequestBody IdRequest idRequest) {
         long id = idRequest.getId();
         if (id <= 0) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
@@ -115,7 +119,7 @@ public class CarSpaceController {
     }
 
     @PostMapping("/listReservedCarSpaces")
-    public BaseResponse listReservedSpaces(@RequestBody IdRequest idRequest) {
+    public BaseResponse<List<ComplCarspace>> listReservedSpaces(@RequestBody IdRequest idRequest) {
         long id = idRequest.getId();
         List<ComplCarspace> complCarSpaces = carSpacesService.listReservedCarSpaces(id);
         return success(complCarSpaces);

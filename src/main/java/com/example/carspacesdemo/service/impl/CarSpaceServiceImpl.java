@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Rico
@@ -39,6 +37,20 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
     IreserveMapper ireserveMapper;
     @Resource
     IreserveService ireserveService;
+
+    @Override
+    public ComplCarspace getCurrentCarSpace(long id) {
+        if(id <= 0){
+            throw new BusinessException(ErrorCode.ERROR_PARAM,"用户id不正确");
+        }
+        Carspace carspace = carSpaceMapper.selectById(id);
+        QueryWrapper<Ireserve> query = new QueryWrapper<Ireserve>();
+        query.eq("car_id",id);
+        List<Ireserve> irs = ireserveMapper.selectList(query);
+        User user = userMapper.selectById(carspace.getOwnerId());
+        ComplCarspace complCarspace = new ComplCarspace(carspace,irs,user);
+        return getSafetyComplCarSpace(complCarspace);
+    }
 
     @Override
     public long carSpaceCreate(long userId, String location, int price, String imageUrl, LocalDateTime startTime, LocalDateTime endTime) {
@@ -217,6 +229,24 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
     public ComplCarspace getSafetyComplCarSpace(ComplCarspace complCarspace) {
         Carspace safetyCarspace = new Carspace();
         Carspace carspace = complCarspace.getCarspace();
+        safetyCarspace.setCarId(carspace.getCarId());
+        safetyCarspace.setLocation(carspace.getLocation());
+        safetyCarspace.setPrice(carspace.getPrice());
+        safetyCarspace.setImageUrl(carspace.getImageUrl());
+        safetyCarspace.setCarStatus(carspace.getCarStatus());
+        List<Ireserve> safetyIreserves = new ArrayList<>();
+        for(Ireserve ireserve:complCarspace.getIreseres()){
+            safetyIreserves.add(ireserveService.getSafetyIreserve(ireserve));
+        }
+        complCarspace.setCarspace(safetyCarspace);
+        complCarspace.setIreseres(safetyIreserves);
+        return complCarspace;
+    }
+    @Override
+    public ComplCarspace getSafetyCarSpace(ComplCarspace complCarspace) {
+        Carspace safetyCarspace = new Carspace();
+        Carspace carspace = complCarspace.getCarspace();
+        safetyCarspace.setCarId(carspace.getCarId());
         safetyCarspace.setLocation(carspace.getLocation());
         safetyCarspace.setPrice(carspace.getPrice());
         safetyCarspace.setImageUrl(carspace.getImageUrl());
