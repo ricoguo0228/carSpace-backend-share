@@ -14,6 +14,13 @@ import java.util.List;
  */
 public interface CarSpaceService extends IService<Carspace> {
     /**
+     * 获取当前车位
+     *
+     * @param id
+     * @return
+     */
+    ComplCarspace getCurrentCarSpace(long id);
+    /**
      * 创建新车位
      *
      * @param location
@@ -92,4 +99,6 @@ public interface CarSpaceService extends IService<Carspace> {
     List<ComplCarspace> listComplCarspacesByCarIds(List<Long> CarIds);
 
     ComplCarspace getSafetyComplCarSpace(ComplCarspace complCarspace);
+
+    ComplCarspace getSafetyCarSpace(ComplCarspace complCarspace);
 }
