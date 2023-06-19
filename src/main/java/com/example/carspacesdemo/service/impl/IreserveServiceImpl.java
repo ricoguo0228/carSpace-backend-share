@@ -67,6 +67,7 @@ public class IreserveServiceImpl extends ServiceImpl<IreserveMapper, Ireserve>
     @Override
     public Ireserve getSafetyIreserve(Ireserve iReserve) {
         Ireserve safetyIreserve = new Ireserve();
+        safetyIreserve.setIId(iReserve.getIId());
         safetyIreserve.setStartTime(iReserve.getStartTime());
         safetyIreserve.setEndTime(iReserve.getEndTime());
         return safetyIreserve;

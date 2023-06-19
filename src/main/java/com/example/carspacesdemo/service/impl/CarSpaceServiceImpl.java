@@ -242,23 +242,7 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
         complCarspace.setIreseres(safetyIreserves);
         return complCarspace;
     }
-    @Override
-    public ComplCarspace getSafetyCarSpace(ComplCarspace complCarspace) {
-        Carspace safetyCarspace = new Carspace();
-        Carspace carspace = complCarspace.getCarspace();
-        safetyCarspace.setCarId(carspace.getCarId());
-        safetyCarspace.setLocation(carspace.getLocation());
-        safetyCarspace.setPrice(carspace.getPrice());
-        safetyCarspace.setImageUrl(carspace.getImageUrl());
-        safetyCarspace.setCarStatus(carspace.getCarStatus());
-        List<Ireserve> safetyIreserves = new ArrayList<>();
-        for(Ireserve ireserve:complCarspace.getIreseres()){
-            safetyIreserves.add(ireserveService.getSafetyIreserve(ireserve));
-        }
-        complCarspace.setCarspace(safetyCarspace);
-        complCarspace.setIreseres(safetyIreserves);
-        return complCarspace;
-    }
+
 }
 
 

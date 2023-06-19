@@ -1,10 +1,12 @@
 package com.example.carspacesdemo.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.carspacesdemo.model.entity.Ireserve;
 import com.example.carspacesdemo.model.entity.Reservation;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 /**
@@ -15,4 +17,6 @@ import java.time.LocalDateTime;
 public interface ReservationService extends IService<Reservation> {
     boolean addReservation(long reserverId, long carId, LocalDateTime reserveStartTime, LocalDateTime reserveEndTime   );
     boolean deleteReservation( long reserveId);
+    List<Reservation> currentReservations(long carId,long userId);
+    Ireserve timeSlotSelect(List<Ireserve> ireserves, LocalDateTime startTime, LocalDateTime endTime);
 }

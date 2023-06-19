@@ -98,7 +98,11 @@ public interface CarSpaceService extends IService<Carspace> {
      */
     List<ComplCarspace> listComplCarspacesByCarIds(List<Long> CarIds);
 
+    /**
+     * 获取安全的完整车位信息
+     * @param complCarspace
+     * @return
+     */
     ComplCarspace getSafetyComplCarSpace(ComplCarspace complCarspace);
 
-    ComplCarspace getSafetyCarSpace(ComplCarspace complCarspace);
 }
