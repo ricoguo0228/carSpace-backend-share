@@ -161,6 +161,28 @@ public class UseServiceImpl extends ServiceImpl<UserMapper, User>
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"更新失败");
     }
     /**
+     * 获取当前登录用户
+     *
+     * @param request
+     * @return
+     */
+    @Override
+    public User getLoginUser(HttpServletRequest request) {
+        // 先判断是否已登录
+        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
+        User currentUser = (User) userObj;
+        if (currentUser == null || currentUser.getUserId() == null) {
+            throw new BusinessException(ErrorCode.LOGIN_ERROR);
+        }
+        // 从数据库查询（追求性能的话可以注释，直接走缓存）
+        long userId = currentUser.getUserId();
+        currentUser = this.getById(userId);
+        if (currentUser == null) {
+            throw new BusinessException(ErrorCode.LOGIN_ERROR);
+        }
+        return currentUser;
+    }
+    /**
      * 用户脱敏
      *
      * @param originUser 目标用户

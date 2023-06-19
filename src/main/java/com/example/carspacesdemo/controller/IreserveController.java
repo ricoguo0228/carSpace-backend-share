@@ -40,7 +40,7 @@ public class IreserveController {
         return success(res);
     }
     @PostMapping("/delete")
-    private BaseResponse<Boolean> timeSlotsIncrease(@RequestBody IdRequest idRequest) {
+    private BaseResponse<Boolean> timeSlotsDelete(@RequestBody IdRequest idRequest) {
         long carId = idRequest.getId();
         if (carId <= 0) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不正确");

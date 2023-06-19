@@ -1,5 +1,6 @@
 package com.example.carspacesdemo.controller;
 
+
 import com.example.carspacesdemo.common.BaseResponse;
 import com.example.carspacesdemo.common.IdRequest;
 import com.example.carspacesdemo.common.ErrorCode;
@@ -35,7 +36,7 @@ public class UserController {
      * @param request
      * @return
      */
-    @GetMapping("/current")
+    @PostMapping("/current")
     public BaseResponse<User> getCurrentUser(HttpServletRequest request) {
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
         User currentUser = (User) userObj;
@@ -91,9 +92,10 @@ public class UserController {
     }
 
     @PostMapping("/delete")
+
     private BaseResponse<Boolean> deleteUsers(@RequestBody IdRequest idRequest, HttpServletRequest httpServletRequest) {
         if (!isAdmin(httpServletRequest))
-            throw new BusinessException(ErrorCode.POWER_ERROR, "权限不足");
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "权限不足");
         Long id = idRequest.getId();
         if (id <= 0) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "id小于0");
@@ -127,6 +129,6 @@ public class UserController {
     private boolean isAdmin(HttpServletRequest httpServletRequest) {
         Object userObj = httpServletRequest.getSession().getAttribute(USER_LOGIN_STATE);
         User user = (User) userObj;
-        return user != null && user.getUserRole() == ADMIN_ROLE;
+        return user != null && user.getUserRole() == 1;
     }
 }

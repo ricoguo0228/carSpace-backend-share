@@ -27,7 +27,7 @@ import static com.example.carspacesdemo.constant.UserConstants.USER_LOGIN_STATE;
 public class CarSpaceController {
     @Resource
     private CarSpaceService carSpacesService;
-    @GetMapping("/current")
+    @PostMapping("/current")
     public BaseResponse<ComplCarspace> getCurrentCarSpace(@RequestBody IdRequest idRequest) {
         Long id = idRequest.getId();
         ComplCarspace carSpace = carSpacesService.getCurrentCarSpace(id);

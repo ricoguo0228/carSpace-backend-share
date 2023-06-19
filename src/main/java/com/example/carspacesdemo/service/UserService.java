@@ -50,6 +50,8 @@ public interface UserService extends IService<User> {
      */
     boolean userUpdate(long userId,String userNewPassword, String userPhone, String NickName) ;
 
+    User getLoginUser(HttpServletRequest request);
+
     /**
      * 用户脱敏
      *
