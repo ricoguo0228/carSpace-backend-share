@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Rico
@@ -42,18 +44,7 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationMapper, Reser
         List<Ireserve> ireserves = ireserveService.listTimeSlots(carId);
         Ireserve ireserve = timeSlotSelect(ireserves, reserveStartTime, reserveEndTime);
         //进行可预约时段的更新
-        ireserveMapper.deleteById(ireserve);
-        Ireserve ireserve1 = new Ireserve();
-        ireserve1.setCarId(carId);
-        ireserve1.setStartTime(reserveStartTime);
-        ireserve1.setEndTime(ireserve.getStartTime());
-        Ireserve ireserve2 = new Ireserve();
-        ireserve2.setCarId(carId);
-        ireserve2.setStartTime(ireserve.getEndTime());
-        ireserve2.setEndTime(reserveEndTime);
-        int i1 = ireserveMapper.insert(ireserve1);
-        int i2 = ireserveMapper.insert(ireserve2);
-        if (i1 == 0 || i2 == 0) {
+        if (!saveSpiltIreserves(carId, ireserve, reserveStartTime, reserveEndTime)) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新可预约时间失败");
         }
         //插入预约数据
@@ -80,6 +71,9 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationMapper, Reser
         if (res == 0) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "失败");
         }
+        Long carId = reservation.getCarId();
+        List<Ireserve> ireserves = ireserveService.listTimeSlots(carId);
+        timeSlotsMerge(carId,ireserves,reservation.getReserveStartTime(),reservation.getReserveEndTime());
         return true;
     }
 
@@ -94,16 +88,80 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationMapper, Reser
     }
 
     @Override
-    public Ireserve timeSlotSelect(List<Ireserve> ireserves, LocalDateTime startTime, LocalDateTime endTime) {
+    public boolean timeSlotsMerge(long carId,List<Ireserve> ireserves, LocalDateTime startTime, LocalDateTime endTime) {
+        Map<Integer,Ireserve> map = new HashMap<>();
         for (Ireserve ireserve : ireserves) {
-            if (startTime.isAfter(ireserve.getStartTime())
-                    && startTime.isBefore(ireserve.getEndTime())
-                    && endTime.isBefore(ireserve.getEndTime())
-                    && endTime.isAfter(ireserve.getStartTime())) {
-                return ireserve;
+            if(startTime.isEqual(ireserve.getEndTime())){
+                map.put(1,ireserve);
+            }
+            if(endTime.isEqual(ireserve.getStartTime())){
+                map.put(2,ireserve);
             }
         }
+        if(map.containsKey(1)&&map.containsKey(2)){
+            Ireserve ireserve1 = map.get(1);
+            Ireserve ireserve2 = map.get(2);
+            ireserveMapper.deleteById(ireserve1);
+            ireserveMapper.deleteById(ireserve2);
+            Ireserve ireserve =new Ireserve();
+            ireserve.setCarId(carId);
+            ireserve.setStartTime(ireserve1.getStartTime());
+            ireserve.setEndTime(ireserve2.getEndTime());
+            ireserveMapper.insert(ireserve);
+            return true;
+        }
+        if(map.containsKey(1)){
+            Ireserve ireserve1 = map.get(1);
+            ireserveMapper.deleteById(ireserve1);
+            Ireserve ireserve =new Ireserve();
+            ireserve.setCarId(carId);
+            ireserve.setStartTime(ireserve1.getStartTime());
+            ireserve.setEndTime(endTime);
+            ireserveMapper.insert(ireserve);
+            return true;
+        }
+        if(map.containsKey(2)){
+            Ireserve ireserve2 = map.get(2);
+            ireserveMapper.deleteById(ireserve2);
+            Ireserve ireserve =new Ireserve();
+            ireserve.setCarId(carId);
+            ireserve.setStartTime(startTime);
+            ireserve.setEndTime(ireserve2.getEndTime());
+            ireserveMapper.insert(ireserve);
+            return true;
+        }
         throw new BusinessException(ErrorCode.ERROR_PARAM, "没有符合的时间段");
+    }
+    @Override
+    public Ireserve timeSlotSelect(List<Ireserve> ireserves, LocalDateTime startTime, LocalDateTime endTime) {
+        for (Ireserve ireserve : ireserves) {
+            if (!((startTime.isAfter(ireserve.getStartTime()) || startTime.isEqual(ireserve.getStartTime())) && startTime.isBefore(ireserve.getEndTime())))
+                break;
+            if (!((endTime.isEqual(ireserve.getEndTime()) || endTime.isAfter(ireserve.getStartTime())) && endTime.isBefore(ireserve.getEndTime())))
+                break;
+            return ireserve;
+        }
+        throw new BusinessException(ErrorCode.ERROR_PARAM, "没有符合的时间段");
+    }
+
+    @Override
+    public boolean saveSpiltIreserves(long carId, Ireserve ireserve, LocalDateTime startTime, LocalDateTime endTime) {
+        ireserveMapper.deleteById(ireserve);
+        if (!startTime.isEqual(ireserve.getStartTime())) {
+            Ireserve ireserve1 = new Ireserve();
+            ireserve1.setCarId(carId);
+            ireserve1.setStartTime(ireserve.getStartTime());
+            ireserve1.setEndTime(startTime);
+            ireserveMapper.insert(ireserve1);
+        }
+        if (!endTime.isEqual(ireserve.getEndTime())) {
+            Ireserve ireserve2 = new Ireserve();
+            ireserve2.setCarId(carId);
+            ireserve2.setStartTime(endTime);
+            ireserve2.setEndTime(ireserve.getEndTime());
+            ireserveMapper.insert(ireserve2);
+        }
+        return true;
     }
 }
 

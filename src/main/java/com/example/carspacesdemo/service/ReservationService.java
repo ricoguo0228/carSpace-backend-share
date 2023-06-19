@@ -18,5 +18,10 @@ public interface ReservationService extends IService<Reservation> {
     boolean addReservation(long reserverId, long carId, LocalDateTime reserveStartTime, LocalDateTime reserveEndTime   );
     boolean deleteReservation( long reserveId);
     List<Reservation> currentReservations(long carId,long userId);
+
+    boolean timeSlotsMerge(long carId,List<Ireserve> ireserves, LocalDateTime startTime, LocalDateTime endTime);
+
     Ireserve timeSlotSelect(List<Ireserve> ireserves, LocalDateTime startTime, LocalDateTime endTime);
+
+    boolean saveSpiltIreserves(long carId, Ireserve ireserve, LocalDateTime startTime, LocalDateTime endTime);
 }
