@@ -24,6 +24,12 @@ public class IreserveController {
     @Resource
     IreserveService ireserveService;
 
+    /**
+     * 添加时间段分段
+     *
+     * @param ireserveIncreaseRequest
+     * @return
+     */
     @PostMapping("/increase")
     private BaseResponse<Boolean> timeSlotsIncrease(@RequestBody IreserveIncreaseRequest ireserveIncreaseRequest) {
         List<LocalDateTime> timeSlots = ireserveIncreaseRequest.getTimeSlots();
@@ -39,6 +45,13 @@ public class IreserveController {
         boolean res = ireserveService.timeSlotInsert(carId, startTime, endTime);
         return success(res);
     }
+
+    /**
+     * 删除时间段分段
+     *
+     * @param idRequest
+     * @return
+     */
     @PostMapping("/delete")
     private BaseResponse<Boolean> timeSlotsDelete(@RequestBody IdRequest idRequest) {
         long carId = idRequest.getId();
@@ -48,6 +61,13 @@ public class IreserveController {
         boolean res = ireserveService.timeSlotDelete(carId);
         return success(res);
     }
+
+    /**
+     * 获取车位的可预约时间段
+     *
+     * @param idRequest
+     * @return
+     */
     @PostMapping("/listTimeSlots")
     private BaseResponse<List<Ireserve>> listTimeSlots(@RequestBody IdRequest idRequest) {
         Long carId = idRequest.getId();

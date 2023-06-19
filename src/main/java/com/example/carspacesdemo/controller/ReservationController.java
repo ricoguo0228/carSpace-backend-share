@@ -28,6 +28,13 @@ public class ReservationController {
     @Resource
     ReservationService reservationService;
 
+    /**
+     * 添加预约信息实现
+     *
+     * @param httpServletRequest
+     * @param request
+     * @return
+     */
     @PostMapping("/add")
     public BaseResponse<Boolean> addReservation(HttpServletRequest httpServletRequest,@RequestBody ReservationAddRequest request){
         User user = (User)httpServletRequest.getSession().getAttribute(USER_LOGIN_STATE);
@@ -48,6 +55,12 @@ public class ReservationController {
         return success(res);
     }
 
+    /**
+     * 删除预约信息实现
+     *
+     * @param idRequest
+     * @return
+     */
     @PostMapping("/delete")
     public BaseResponse<Boolean> deleteReservation(@RequestBody IdRequest idRequest){
         long reserveId = idRequest.getId();
@@ -57,6 +70,14 @@ public class ReservationController {
         boolean res = reservationService.deleteReservation(reserveId);
         return success(res);
     }
+
+    /**
+     * 获取用户的车位预约信息实现
+     *
+     * @param idRequest
+     * @param httpServletRequest
+     * @return
+     */
     @PostMapping("/current")
     public BaseResponse<List<Reservation>> currentReservations(@RequestBody IdRequest idRequest,HttpServletRequest httpServletRequest){
         User user = (User)httpServletRequest.getSession().getAttribute(USER_LOGIN_STATE);

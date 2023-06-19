@@ -49,7 +49,12 @@ public class UserController {
         User safetyUser = userService.getSafetyUser(user);
         return success(safetyUser);
     }
-
+    /**
+     * 注册实现
+     *
+     * @param userRegisterRequest
+     * @return
+     */
     @PostMapping("/register")
     private BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         if (userRegisterRequest == null) {
@@ -66,6 +71,12 @@ public class UserController {
         return success(id);
     }
 
+    /**
+     * 登录实现
+     * @param userLoginRequest
+     * @param httpServletRequest
+     * @return
+     */
     @PostMapping("/login")
     private BaseResponse<User> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest httpServletRequest) {
         if (userLoginRequest == null) {
@@ -80,6 +91,12 @@ public class UserController {
         return success(user);
     }
 
+    /**
+     * 登出实现
+     *
+     * @param httpServletRequest
+     * @return
+     */
     @PostMapping("/logout")
     private BaseResponse<Boolean> userLogout( HttpServletRequest httpServletRequest) {
         if (httpServletRequest == null) {
@@ -91,8 +108,14 @@ public class UserController {
         throw new BusinessException(ErrorCode.SYSTEM_ERROR);
     }
 
+    /**
+     * 删除用户实现（管理员）
+     *
+     * @param idRequest
+     * @param httpServletRequest
+     * @return
+     */
     @PostMapping("/delete")
-
     private BaseResponse<Boolean> deleteUsers(@RequestBody IdRequest idRequest, HttpServletRequest httpServletRequest) {
         if (!isAdmin(httpServletRequest))
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "权限不足");
@@ -103,6 +126,13 @@ public class UserController {
         return success(userService.removeById(id));
     }
 
+    /**
+     * 更新用户信息实现
+     *
+     * @param userUpdatePasswordRequest
+     * @param httpServletRequest
+     * @return
+     */
     @PostMapping("/update")
     private BaseResponse<Boolean> userUpdate(@RequestBody UserUpdateRequest userUpdatePasswordRequest,HttpServletRequest httpServletRequest) {
         if (userUpdatePasswordRequest == null) {
