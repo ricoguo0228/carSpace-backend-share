@@ -12,7 +12,6 @@ import com.example.carspacesdemo.model.entity.User;
 import com.example.carspacesdemo.service.CarSpaceService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -64,7 +63,8 @@ public class CarSpaceController {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
         }
-        return success(carSpacesService.removeById(id));
+        boolean res = carSpacesService.carSpaceDelete(id);
+        return success(res);
     }
 
     @PostMapping("/update")

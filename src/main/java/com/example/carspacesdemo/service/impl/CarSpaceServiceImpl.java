@@ -105,6 +105,23 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
         }
         return true;
     }
+    @Override
+    public boolean carSpaceDelete(long carId) {
+        if (carId <= 0) {
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
+        }
+        QueryWrapper<Reservation> queryWrapper =new QueryWrapper<>();
+        queryWrapper.eq("car_id",carId);
+        Long count = reservationMapper.selectCount(queryWrapper);
+        if(count > 0){
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "车位正在被预定，无法删除");
+        }
+        int res = carSpaceMapper.deleteById(carId);
+        if(res ==0){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "系统错误");
+        }
+        return true;
+    }
 
     @Override
     public boolean carSpacePublish(long carId) {

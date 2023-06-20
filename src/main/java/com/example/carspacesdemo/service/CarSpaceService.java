@@ -42,6 +42,8 @@ public interface CarSpaceService extends IService<Carspace> {
      */
     boolean carSpaceUpdate(long carId, String location, int price, String imageUrl);
 
+    boolean carSpaceDelete(long carId);
+
     /**
      * 车位发布
      *

@@ -42,4 +42,5 @@ public interface IreserveService extends IService<Ireserve> {
      */
     Ireserve getSafetyIreserve(Ireserve iReserve);
 
+    boolean timeSlotCheck(long carId, LocalDateTime startTime, LocalDateTime endTime);
 }
