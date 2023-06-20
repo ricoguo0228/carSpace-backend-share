@@ -149,6 +149,7 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
     public List<ComplCarspace> listReservedCarSpaces(long reserverId) {
         QueryWrapper<Reservation> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("reserver_id", reserverId);
+        queryWrapper.eq("reserve_status", 0);
         List<Reservation> reservations = reservationMapper.selectList(queryWrapper);
         List<Long> CarIds = new ArrayList<>();
         for (Reservation reservation : reservations) {
