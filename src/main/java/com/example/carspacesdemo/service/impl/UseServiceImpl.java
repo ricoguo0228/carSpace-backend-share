@@ -16,6 +16,7 @@ import org.springframework.util.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,10 +31,7 @@ import static com.example.carspacesdemo.constant.UserConstants.*;
 @Service
 public class UseServiceImpl extends ServiceImpl<UserMapper, User>
         implements UserService {
-    /**
-     * 盐值，混淆密码
-     */
-    String SALT = "Rico";
+
     @Resource
     private UserMapper userMapper;
 
@@ -95,7 +93,7 @@ public class UseServiceImpl extends ServiceImpl<UserMapper, User>
         }
         // 账户不能包含特殊字符
         String validPattern = "[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
-        ;
+
         Matcher matcher = Pattern.compile(validPattern).matcher(userAccount);
         if (matcher.find()) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "账户重复了");
@@ -130,11 +128,11 @@ public class UseServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public boolean userUpdate(long userId,String userNewPassword, String userPhone, String NickName) {
+    public boolean userUpdate(long userId,String userNewPassword,String userPassword,String userPhone, String NickName) {
         if(userId <= 0){
             throw new BusinessException(ErrorCode.ERROR_PARAM, "用户id不正确");
         }
-        if (StringUtils.isAnyBlank(userNewPassword, userPhone)) {
+        if (StringUtils.isAnyBlank(userNewPassword,userPhone)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
         if(userPhone.length() != 11) {
@@ -146,6 +144,10 @@ public class UseServiceImpl extends ServiceImpl<UserMapper, User>
         User user = userMapper.selectById(userId);
         if(user == null){
             throw new BusinessException(ErrorCode.ERROR_PARAM,"用户已经不存在");
+        }
+        String checkPassword = user.getUserPassword();
+        if(!Objects.equals(checkPassword, DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes()))){
+            throw new BusinessException(ErrorCode.ERROR_PARAM,"密码错误");
         }
         // 加密
         String encryptNewPassword = DigestUtils.md5DigestAsHex((SALT + userNewPassword).getBytes());

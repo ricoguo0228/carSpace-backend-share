@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface UserService extends IService<User> {
     /**
-     * @param userAccount    用户名
+     * @param userAccount  用户名
      * @param userPassword 用户密码
      * @param userPhone    用户手机号
      * @return 返回用户id
@@ -44,11 +44,12 @@ public interface UserService extends IService<User> {
      *
      * @param userId
      * @param userNewPassword
+     * @param userPassword
      * @param userPhone
      * @param NickName
      * @return
      */
-    boolean userUpdate(long userId,String userNewPassword, String userPhone, String NickName) ;
+    boolean userUpdate(long userId, String userNewPassword,String userPassword, String userPhone, String NickName);
 
     User getLoginUser(HttpServletRequest request);
 

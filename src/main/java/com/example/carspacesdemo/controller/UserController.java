@@ -12,9 +12,12 @@ import com.example.carspacesdemo.service.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+
+import java.util.Objects;
 
 import static com.example.carspacesdemo.common.ResultUtils.success;
 import static com.example.carspacesdemo.constant.UserConstants.*;
@@ -138,15 +141,16 @@ public class UserController {
         if (userUpdatePasswordRequest == null) {
             return null;
         }
+        String userPassword = userUpdatePasswordRequest.getUserPassword();
         String userNewPassword = userUpdatePasswordRequest.getUserNewPassword();
         String userNewPhone = userUpdatePasswordRequest.getUserPhone();
         String NickName = userUpdatePasswordRequest.getNickName();
-        if (StringUtils.isAnyBlank(userNewPassword, userNewPhone,NickName)) {
+        if (StringUtils.isAnyBlank(userPassword,userNewPassword, userNewPhone,NickName)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
         User user = (User)httpServletRequest.getSession().getAttribute(USER_LOGIN_STATE);
         long id = user.getUserId();
-        boolean res = userService.userUpdate(id, userNewPassword, userNewPhone,NickName);
+        boolean res = userService.userUpdate(id, userNewPassword,userPassword ,userNewPhone,NickName);
         return success(res);
     }
 
