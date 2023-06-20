@@ -4,16 +4,20 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Objects;
+
 import lombok.Data;
 
 /**
  * 预约表
+ *
  * @TableName reservation
  */
-@TableName(value ="reservation")
+@TableName(value = "reservation")
 @Data
 public class Reservation implements Serializable {
     /**
@@ -59,4 +63,17 @@ public class Reservation implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Reservation that = (Reservation) o;
+        return Objects.equals(reserverId, that.reserverId) && Objects.equals(carId, that.carId) && Objects.equals(reserveStatus, that.reserveStatus);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(reserverId, carId, reserveStatus);
+    }
 }

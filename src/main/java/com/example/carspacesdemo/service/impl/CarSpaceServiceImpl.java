@@ -11,13 +11,16 @@ import com.example.carspacesdemo.mapper.UserMapper;
 import com.example.carspacesdemo.model.entity.*;
 import com.example.carspacesdemo.service.CarSpaceService;
 import com.example.carspacesdemo.service.IreserveService;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Rico
@@ -150,7 +153,7 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
         QueryWrapper<Reservation> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("reserver_id", reserverId);
         queryWrapper.eq("reserve_status", 0);
-        List<Reservation> reservations = reservationMapper.selectList(queryWrapper);
+        Set<Reservation> reservations =new HashSet<Reservation>(reservationMapper.selectList(queryWrapper)) ;
         List<Long> CarIds = new ArrayList<>();
         for (Reservation reservation : reservations) {
             CarIds.add(reservation.getCarId());

@@ -136,9 +136,9 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationMapper, Reser
     public Ireserve timeSlotSelect(List<Ireserve> ireserves, LocalDateTime startTime, LocalDateTime endTime) {
         for (Ireserve ireserve : ireserves) {
             if (!((startTime.isAfter(ireserve.getStartTime()) || startTime.isEqual(ireserve.getStartTime())) && startTime.isBefore(ireserve.getEndTime())))
-                break;
+                continue;
             if (!((endTime.isEqual(ireserve.getEndTime()) || endTime.isAfter(ireserve.getStartTime())) && endTime.isBefore(ireserve.getEndTime())))
-                break;
+                continue;
             return ireserve;
         }
         throw new BusinessException(ErrorCode.ERROR_PARAM, "没有符合的时间段");
