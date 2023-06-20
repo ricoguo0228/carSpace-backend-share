@@ -183,31 +183,9 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
     public List<ComplCarspace> listComplCarspacesByList(List<Carspace> carspaces) {
         List<ComplCarspace> complCarspaces = new ArrayList<>();
         for (Carspace carSpace : carspaces) {
-            //筛选可预约的时间
             QueryWrapper<Ireserve> ireserveQueryWrapper = new QueryWrapper<Ireserve>();
             ireserveQueryWrapper.eq("car_id", carSpace.getCarId());
             List<Ireserve> ires = ireserveMapper.selectList(ireserveQueryWrapper);
-//            //筛选已经预约的时间
-//            QueryWrapper<Reservation> queryWrapper = new QueryWrapper<Reservation>();
-//            queryWrapper.eq("car_id", carSpace.getCarId());
-//            queryWrapper.eq("reserve_status", 0);
-//            List<Reservation> reservations = reservationMapper.selectList(queryWrapper);
-//            //时间切分
-//            Map<LocalDateTime, LocalDateTime> reserveSlots = new HashMap<LocalDateTime, LocalDateTime>();
-//            int reserveStatus = -1;
-//            for (Reservation reservation : reservations) {
-//                reserveSlots.put(reservation.getReserveStartTime(), reservation.getReserveEndTime());
-//                reserveStatus = reservation.getReserveStatus();
-//            }
-//            Map<LocalDateTime, LocalDateTime> availableSlots = new HashMap<>();
-//            for (LocalDateTime left : reserveSlots.keySet()) {
-//                if (left.isAfter(startTime) && left.isBefore(endTime)) {
-//                    availableSlots.put(startTime, left);
-//                }
-//                if (reserveSlots.get(left).isAfter(startTime) && reserveSlots.get(left).isBefore(endTime)) {
-//                    availableSlots.put(reserveSlots.get(left), endTime);
-//                }
-//            }
             User user = userMapper.selectById(carSpace.getOwnerId());
             complCarspaces.add(getSafetyComplCarSpace(new ComplCarspace(carSpace,ires, user)));
         }
