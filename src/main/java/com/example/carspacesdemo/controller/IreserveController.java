@@ -54,11 +54,11 @@ public class IreserveController {
      */
     @PostMapping("/delete")
     private BaseResponse<Boolean> timeSlotsDelete(@RequestBody IdRequest idRequest) {
-        long carId = idRequest.getId();
-        if (carId <= 0) {
-            throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不正确");
+        long iId = idRequest.getId();
+        if (iId <= 0) {
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "预约不规范");
         }
-        boolean res = ireserveService.timeSlotDelete(carId);
+        boolean res = ireserveService.timeSlotDelete(iId);
         return success(res);
     }
 
