@@ -42,8 +42,8 @@ public class ReservationController {
             throw new BusinessException(ErrorCode.LOGIN_ERROR,"用户未登录");
         }
         long carId = request.getCarId();
-        LocalDateTime reserveStartTime = request.getReserveStartTime();
-        LocalDateTime reserveEndTime = request.getReserveEndTime();
+        LocalDateTime reserveStartTime= request.getTimeSlots().get(0).plusHours(8);
+        LocalDateTime reserveEndTime = request.getTimeSlots().get(1).plusHours(8);
         if(carId <= 0){
             throw new BusinessException(ErrorCode.ERROR_PARAM,"车位id不规范");
         }

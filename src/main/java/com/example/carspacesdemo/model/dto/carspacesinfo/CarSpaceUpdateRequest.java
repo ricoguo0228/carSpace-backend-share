@@ -12,5 +12,6 @@ public class CarSpaceUpdateRequest implements Serializable {
     String location;
     int price;
     String imageUrl;
+
     Map<LocalDateTime,LocalDateTime> TimeSlots;
 }

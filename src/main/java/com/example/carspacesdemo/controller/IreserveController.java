@@ -33,8 +33,8 @@ public class IreserveController {
     @PostMapping("/increase")
     private BaseResponse<Boolean> timeSlotsIncrease(@RequestBody IreserveIncreaseRequest ireserveIncreaseRequest) {
         List<LocalDateTime> timeSlots = ireserveIncreaseRequest.getTimeSlots();
-        LocalDateTime startTime = timeSlots.get(0);
-        LocalDateTime endTime = timeSlots.get(1);
+        LocalDateTime startTime = timeSlots.get(0).plusHours(8);
+        LocalDateTime endTime = timeSlots.get(1).plusHours(8);
         long carId = ireserveIncreaseRequest.getCarId();
         if (startTime.isAfter(endTime)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "开始时间不可以比结束时间晚");
