@@ -3,8 +3,6 @@ package com.example.carspacesdemo.model.dto.carspacesinfo;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Map;
 
 @Data
 public class CarSpaceUpdateRequest implements Serializable {
@@ -12,6 +10,4 @@ public class CarSpaceUpdateRequest implements Serializable {
     String location;
     int price;
     String imageUrl;
-
-    Map<LocalDateTime,LocalDateTime> TimeSlots;
 }

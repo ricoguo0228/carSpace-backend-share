@@ -76,7 +76,12 @@ public class CarSpaceController {
         String location = updateRequest.getLocation();
         int price = updateRequest.getPrice();
         String imageUrl = updateRequest.getImageUrl();
-        Map<LocalDateTime, LocalDateTime> timeSlots = updateRequest.getTimeSlots();
+        if(StringUtils.isAnyBlank(location)){
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
+        }
+        if(price <0){
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "价格不规范");
+        }
         if (carId <= 0) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
         }

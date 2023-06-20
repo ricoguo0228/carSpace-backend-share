@@ -112,6 +112,7 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
         }
         QueryWrapper<Reservation> queryWrapper =new QueryWrapper<>();
         queryWrapper.eq("car_id",carId);
+        queryWrapper.eq("reserve_status",0);
         Long count = reservationMapper.selectCount(queryWrapper);
         if(count > 0){
             throw new BusinessException(ErrorCode.ERROR_PARAM, "车位正在被预定，无法删除");
