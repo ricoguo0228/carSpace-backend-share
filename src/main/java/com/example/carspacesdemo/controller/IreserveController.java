@@ -40,7 +40,7 @@ public class IreserveController {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "开始时间不可以比结束时间晚");
         }
         if (carId <= 0) {
-            throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不正确");
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "系统出现错误");
         }
         boolean res = ireserveService.timeSlotInsert(carId, startTime, endTime);
         return success(res);

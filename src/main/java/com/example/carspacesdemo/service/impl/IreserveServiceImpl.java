@@ -36,7 +36,7 @@ public class IreserveServiceImpl extends ServiceImpl<IreserveMapper, Ireserve>
         }
         //检查时间段是否符合
         if (!timeSlotCheck(carId, startTime, endTime)) {
-            throw new BusinessException(ErrorCode.ERROR_PARAM, "插入时间不规范");
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "车位在这个时段已经被预约，请换个时间吧");
         }
         //保存车位可用时间段信息
         Ireserve ireserve = new Ireserve();
@@ -45,7 +45,7 @@ public class IreserveServiceImpl extends ServiceImpl<IreserveMapper, Ireserve>
         ireserve.setEndTime(endTime);
         int i = ireserveMapper.insert(ireserve);
         if (i == 0) {
-            throw new BusinessException(ErrorCode.DAO_ERROR, "删除失败");
+            throw new BusinessException(ErrorCode.DAO_ERROR, "数据库出现错误");
         }
         return true;
     }
@@ -55,7 +55,7 @@ public class IreserveServiceImpl extends ServiceImpl<IreserveMapper, Ireserve>
     public boolean timeSlotDelete(long iId) {
         int i = ireserveMapper.deleteById(iId);
         if (i == 0) {
-            throw new BusinessException(ErrorCode.DAO_ERROR, "删除失败");
+            throw new BusinessException(ErrorCode.DAO_ERROR, "数据库出现错误");
         }
         return true;
     }
@@ -91,12 +91,13 @@ public class IreserveServiceImpl extends ServiceImpl<IreserveMapper, Ireserve>
             if (startTime.isAfter(reservation.getReserveStartTime()) && endTime.isBefore(reservation.getReserveEndTime())) {
                 return false;
             }
-            if (startTime.isBefore(reservation.getReserveStartTime()) &&
-                    endTime.isAfter(reservation.getReserveStartTime()) && endTime.isBefore(reservation.getReserveEndTime())) {
+            if (endTime.isAfter(reservation.getReserveStartTime()) && endTime.isBefore(reservation.getReserveEndTime())) {
                 return false;
             }
-            if (endTime.isAfter(reservation.getReserveEndTime()) &&
-                    startTime.isAfter(reservation.getReserveStartTime()) && startTime.isBefore(reservation.getReserveEndTime())) {
+            if (startTime.isAfter(reservation.getReserveStartTime()) && startTime.isBefore(reservation.getReserveEndTime())) {
+                return false;
+            }
+            if (endTime.isAfter(reservation.getReserveEndTime()) && startTime.isBefore(reservation.getReserveStartTime())) {
                 return false;
             }
         }
