@@ -44,6 +44,7 @@ public class ReservationController {
         long carId = request.getCarId();
         LocalDateTime reserveStartTime= request.getTimeSlots().get(0).plusHours(8);
         LocalDateTime reserveEndTime = request.getTimeSlots().get(1).plusHours(8);
+        String carPass = request.getCarPass();
         if(carId <= 0){
             throw new BusinessException(ErrorCode.ERROR_PARAM,"车位id不规范");
         }
@@ -51,7 +52,7 @@ public class ReservationController {
             throw new BusinessException(ErrorCode.ERROR_PARAM,"开始时间不能晚于结束时间");
         }
         long reserverId = user.getUserId();
-        boolean res = reservationService.addReservation(reserverId, carId, reserveStartTime, reserveEndTime);
+        boolean res = reservationService.addReservation(reserverId, carId, reserveStartTime, reserveEndTime,carPass);
         return success(res);
     }
 
@@ -78,8 +79,8 @@ public class ReservationController {
      * @param httpServletRequest
      * @return
      */
-    @PostMapping("/current")
-    public BaseResponse<List<Reservation>> currentReservations(@RequestBody IdRequest idRequest,HttpServletRequest httpServletRequest){
+    @PostMapping("/currentReserve")
+    public BaseResponse<List<Reservation>> currentReservationsInReserve(@RequestBody IdRequest idRequest,HttpServletRequest httpServletRequest){
         User user = (User)httpServletRequest.getSession().getAttribute(USER_LOGIN_STATE);
         if(user==null){
             throw new BusinessException(ErrorCode.LOGIN_ERROR,"用户未登录");
@@ -89,7 +90,16 @@ public class ReservationController {
         if(carId <= 0){
             throw new BusinessException(ErrorCode.ERROR_PARAM,"车位id不规范");
         }
-        List<Reservation> reservations = reservationService.currentReservations(carId, userId);
+        List<Reservation> reservations = reservationService.currentReservationsInReserve(carId, userId);
+        return success(reservations);
+    }
+    @PostMapping("/currentCreate")
+    public BaseResponse<List<Reservation>> currentReservationsInCreate(@RequestBody IdRequest idRequest){
+        long carId = idRequest.getId();
+        if(carId <= 0){
+            throw new BusinessException(ErrorCode.ERROR_PARAM,"车位id不规范");
+        }
+        List<Reservation> reservations = reservationService.currentReservationsInCreate(carId);
         return success(reservations);
     }
 }

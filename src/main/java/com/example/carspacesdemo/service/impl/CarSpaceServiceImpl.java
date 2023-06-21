@@ -44,7 +44,7 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
     @Override
     public ComplCarspace getCurrentCarSpace(long id) {
         if (id <= 0) {
-            throw new BusinessException(ErrorCode.ERROR_PARAM, "用户id不正确");
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "系统出现错误");
         }
         Carspace carspace = carSpaceMapper.selectById(id);
         QueryWrapper<Ireserve> query = new QueryWrapper<Ireserve>();
@@ -74,7 +74,7 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
         carSpace.setOwnerId(userId);
         boolean saveResult = this.save(carSpace);
         if (!saveResult) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "保存失败了");
+            throw new BusinessException(ErrorCode.DAO_ERROR, "数据库出现错误");
         }
         //保存车位可用时间段信息
         Ireserve ireserve = new Ireserve();
@@ -83,7 +83,7 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
         ireserve.setEndTime(endTime);
         int i = ireserveMapper.insert(ireserve);
         if (i == 0) {
-            throw new BusinessException(ErrorCode.DAO_ERROR, "删除失败");
+            throw new BusinessException(ErrorCode.DAO_ERROR, "数据库出现错误");
         }
         return carSpace.getCarId();
     }
@@ -92,7 +92,7 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
     @Override
     public boolean carSpaceUpdate(long carId, String location, int price, String imageUrl) {
         if (carId <= 0) {
-            throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "系统出现错误");
         }
         //保存基础车位信息到车位表中
         Carspace carSpace = carSpaceMapper.selectById(carId);
@@ -101,7 +101,7 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
         carSpace.setImageUrl(imageUrl);
         boolean updateResult = this.updateById(carSpace);
         if (!updateResult) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新失败了");
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "系统出现错误");
         }
         return true;
     }
@@ -109,7 +109,7 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
     @Override
     public boolean carSpaceDelete(long carId) {
         if (carId <= 0) {
-            throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "系统出现错误");
         }
         QueryWrapper<Reservation> reservationQueryWrapper = new QueryWrapper<>();
         reservationQueryWrapper.eq("car_id", carId);
@@ -123,7 +123,7 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
         ireserveQueryWrapper.eq("car_id", carId);
         ireserveMapper.delete(ireserveQueryWrapper);
         if (carSpaceDeleteRes == 0) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "系统错误");
+            throw new BusinessException(ErrorCode.DAO_ERROR, "数据库出现错误");
         }
         return true;
     }
@@ -131,13 +131,13 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
     @Override
     public boolean carSpacePublish(long carId) {
         if (carId <= 0) {
-            throw new BusinessException(ErrorCode.ERROR_PARAM, "车位ID不能为空");
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "系统出现错误");
         }
         Carspace carSpace = carSpaceMapper.selectById(carId);
         carSpace.setCarStatus(1);
         boolean updateResult = this.updateById(carSpace);
         if (!updateResult) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "发布失败了");
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "系统出现错误");
         }
         return updateResult;
     }
@@ -145,7 +145,7 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
     @Override
     public boolean carSpaceInvoke(long carId) {
         if (carId <= 0) {
-            throw new BusinessException(ErrorCode.ERROR_PARAM, "车位ID不能为空");
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "系统出现错误");
         }
         QueryWrapper<Reservation> reservation = new QueryWrapper<>();
         reservation.eq("car_id",carId);

@@ -17,4 +17,5 @@ public class ReservationAddRequest implements Serializable {
     private static final long serialVersionUID = 77690550829374813L;
     long carId;
     List<LocalDateTime> timeSlots;
+    String carPass;
 }

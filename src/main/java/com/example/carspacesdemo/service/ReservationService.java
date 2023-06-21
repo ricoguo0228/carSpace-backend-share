@@ -15,11 +15,12 @@ import java.util.List;
 * @createDate 2023-06-12 14:39:46
 */
 public interface ReservationService extends IService<Reservation> {
-    boolean addReservation(long reserverId, long carId, LocalDateTime reserveStartTime, LocalDateTime reserveEndTime   );
+    boolean addReservation(long reserverId, long carId, LocalDateTime reserveStartTime, LocalDateTime reserveEndTime,String carPass);
     boolean deleteReservation( long reserveId);
-    List<Reservation> currentReservations(long carId,long userId);
+    List<Reservation> currentReservationsInReserve(long carId,long userId);
+    List<Reservation> currentReservationsInCreate(long carId);
 
-    boolean timeSlotsMerge(long carId,List<Ireserve> ireserves, LocalDateTime startTime, LocalDateTime endTime);
+    boolean timeSlotsMerge(long carId, List<Ireserve> ireserves, LocalDateTime startTime, LocalDateTime endTime);
 
     Ireserve timeSlotSelect(List<Ireserve> ireserves, LocalDateTime startTime, LocalDateTime endTime);
 

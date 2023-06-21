@@ -4,10 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.carspacesdemo.common.ErrorCode;
 import com.example.carspacesdemo.exception.BusinessException;
-import com.example.carspacesdemo.mapper.CarspaceMapper;
 import com.example.carspacesdemo.mapper.IreserveMapper;
 import com.example.carspacesdemo.mapper.ReservationMapper;
-import com.example.carspacesdemo.model.entity.Carspace;
 import com.example.carspacesdemo.model.entity.Ireserve;
 import com.example.carspacesdemo.model.entity.Reservation;
 import com.example.carspacesdemo.service.IreserveService;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,21 +31,19 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationMapper, Reser
     @Resource
     IreserveMapper ireserveMapper;
     @Resource
-    CarspaceMapper carspaceMapper;
-    @Resource
     IreserveService ireserveService;
 
     @Override
-    public boolean addReservation(long reserverId, long carId, LocalDateTime reserveStartTime, LocalDateTime reserveEndTime) {
+    public boolean addReservation(long reserverId, long carId, LocalDateTime reserveStartTime, LocalDateTime reserveEndTime,String carPass) {
         if (carId <= 0) {
-            throw new BusinessException(ErrorCode.ERROR_PARAM, "车位id不规范");
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "系统出现错误");
         }
         //校验是否符合可预约时段
         List<Ireserve> ireserves = ireserveService.listTimeSlots(carId);
         Ireserve ireserve = timeSlotSelect(ireserves, reserveStartTime, reserveEndTime);
         //进行可预约时段的更新
         if (!saveSpiltIreserves(carId, ireserve, reserveStartTime, reserveEndTime)) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新可预约时间失败");
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "系统出现错误");
         }
         //插入预约数据
         Reservation reservation = new Reservation();
@@ -56,6 +51,7 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationMapper, Reser
         reservation.setCarId(carId);
         reservation.setReserveStartTime(reserveStartTime);
         reservation.setReserveEndTime(reserveEndTime);
+        reservation.setCarPass(carPass);
         reservationMapper.insert(reservation);
         return true;
     }
@@ -63,7 +59,7 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationMapper, Reser
     @Override
     public boolean deleteReservation(long reserveId) {
         if (reserveId <= 0) {
-            throw new BusinessException(ErrorCode.ERROR_PARAM, "车位id不规范");
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "系统出现错误");
         }
         Reservation reservation = reservationMapper.selectById(reserveId);
         if (reservation == null) {
@@ -73,7 +69,7 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationMapper, Reser
         reservation.setReserveStatus(1);
         int res = reservationMapper.updateById(reservation);
         if (res == 0) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "失败");
+            throw new BusinessException(ErrorCode.DAO_ERROR, "数据库出现错误");
         }
         Long carId = reservation.getCarId();
         List<Ireserve> ireserves = ireserveService.listTimeSlots(carId);
@@ -82,9 +78,17 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationMapper, Reser
     }
 
     @Override
-    public List<Reservation> currentReservations(long carId, long userId) {
+    public List<Reservation> currentReservationsInReserve(long carId, long userId) {
         QueryWrapper<Reservation> query = new QueryWrapper<>();
         query.eq("reserver_id", userId);
+        query.eq("car_id", carId);
+        query.eq("reserve_status", 0);
+        List<Reservation> reservations = reservationMapper.selectList(query);
+        return reservations;
+    }
+    @Override
+    public List<Reservation> currentReservationsInCreate(long carId) {
+        QueryWrapper<Reservation> query = new QueryWrapper<>();
         query.eq("car_id", carId);
         query.eq("reserve_status", 0);
         List<Reservation> reservations = reservationMapper.selectList(query);

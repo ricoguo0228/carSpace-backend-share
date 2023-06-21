@@ -60,6 +60,10 @@ public class Reservation implements Serializable {
      * 数据更新时间
      */
     private LocalDateTime updateTime;
+    /**
+     * 车牌号
+     */
+    private String carPass;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

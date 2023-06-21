@@ -12,7 +12,7 @@ public class ComplCarspace {
         this.carspace = carspace;
         this.ireseres = ireseres;
         this.phoneNumber = user.getUserPhone();
-        this.ownerName = user.getUserAccount();
+        this.ownerName = user.getNickName();
     }
     public ComplCarspace(Carspace carspace,List<Ireserve> ireseres) {
         this.carspace = carspace;

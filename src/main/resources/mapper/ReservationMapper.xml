@@ -13,11 +13,12 @@
             <result property="reserveEndTime" column="reserve_end_time" jdbcType="TIMESTAMP"/>
             <result property="insertTime" column="insert_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="carPass" column="car_pass" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         reserve_id,reserver_id,car_id,
         reserve_status,reserve_start_time,reserve_end_time,
-        insert_time,update_time
+        insert_time,update_time,car_pass
     </sql>
 </mapper>
