@@ -85,6 +85,7 @@ public class IreserveServiceImpl extends ServiceImpl<IreserveMapper, Ireserve>
     public boolean timeSlotCheck(long carId, LocalDateTime startTime, LocalDateTime endTime) {
         QueryWrapper<Reservation> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("car_id", carId);
+        queryWrapper.eq("reserve_status",0);
         List<Reservation> reservations = reservationMapper.selectList(queryWrapper);
         for (Reservation reservation : reservations) {
             if (startTime.isAfter(reservation.getReserveStartTime()) && endTime.isBefore(reservation.getReserveEndTime())) {

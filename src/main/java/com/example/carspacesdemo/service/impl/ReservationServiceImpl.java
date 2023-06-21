@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.carspacesdemo.common.ErrorCode;
 import com.example.carspacesdemo.exception.BusinessException;
+import com.example.carspacesdemo.mapper.CarspaceMapper;
 import com.example.carspacesdemo.mapper.IreserveMapper;
 import com.example.carspacesdemo.mapper.ReservationMapper;
+import com.example.carspacesdemo.model.entity.Carspace;
 import com.example.carspacesdemo.model.entity.Ireserve;
 import com.example.carspacesdemo.model.entity.Reservation;
 import com.example.carspacesdemo.service.IreserveService;
@@ -31,7 +33,8 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationMapper, Reser
     ReservationMapper reservationMapper;
     @Resource
     IreserveMapper ireserveMapper;
-
+    @Resource
+    CarspaceMapper carspaceMapper;
     @Resource
     IreserveService ireserveService;
 
@@ -66,6 +69,7 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationMapper, Reser
         if (reservation == null) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "没有这个id对应的预约记录");
         }
+        //修改预约状态
         reservation.setReserveStatus(1);
         int res = reservationMapper.updateById(reservation);
         if (res == 0) {

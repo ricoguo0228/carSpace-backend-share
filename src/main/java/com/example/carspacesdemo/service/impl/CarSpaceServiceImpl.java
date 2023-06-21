@@ -43,15 +43,15 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
 
     @Override
     public ComplCarspace getCurrentCarSpace(long id) {
-        if(id <= 0){
-            throw new BusinessException(ErrorCode.ERROR_PARAM,"用户id不正确");
+        if (id <= 0) {
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "用户id不正确");
         }
         Carspace carspace = carSpaceMapper.selectById(id);
         QueryWrapper<Ireserve> query = new QueryWrapper<Ireserve>();
-        query.eq("car_id",id);
+        query.eq("car_id", id);
         List<Ireserve> irs = ireserveMapper.selectList(query);
         User user = userMapper.selectById(carspace.getOwnerId());
-        ComplCarspace complCarspace = new ComplCarspace(carspace,irs,user);
+        ComplCarspace complCarspace = new ComplCarspace(carspace, irs, user);
         return getSafetyComplCarSpace(complCarspace);
     }
 
@@ -63,8 +63,8 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
         if (price < 0) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "价格不能小于0");
         }
-        if(startTime.isAfter(endTime)){
-            throw new BusinessException(ErrorCode.ERROR_PARAM,"开始时间不可以比结束时间晚");
+        if (startTime.isAfter(endTime)) {
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "开始时间不可以比结束时间晚");
         }
         //保存基础车位信息到车位表中
         Carspace carSpace = new Carspace();
@@ -83,7 +83,7 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
         ireserve.setEndTime(endTime);
         int i = ireserveMapper.insert(ireserve);
         if (i == 0) {
-            throw new BusinessException(ErrorCode.DAO_ERROR,"删除失败");
+            throw new BusinessException(ErrorCode.DAO_ERROR, "删除失败");
         }
         return carSpace.getCarId();
     }
@@ -105,20 +105,24 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
         }
         return true;
     }
+
     @Override
     public boolean carSpaceDelete(long carId) {
         if (carId <= 0) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
         }
-        QueryWrapper<Reservation> queryWrapper =new QueryWrapper<>();
-        queryWrapper.eq("car_id",carId);
-        queryWrapper.eq("reserve_status",0);
-        Long count = reservationMapper.selectCount(queryWrapper);
-        if(count > 0){
+        QueryWrapper<Reservation> reservationQueryWrapper = new QueryWrapper<>();
+        reservationQueryWrapper.eq("car_id", carId);
+        reservationQueryWrapper.eq("reserve_status", 0);
+        Long count = reservationMapper.selectCount(reservationQueryWrapper);
+        if (count > 0) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "车位正在被预定，无法删除");
         }
-        int res = carSpaceMapper.deleteById(carId);
-        if(res ==0){
+        int carSpaceDeleteRes = carSpaceMapper.deleteById(carId);
+        QueryWrapper<Ireserve> ireserveQueryWrapper = new QueryWrapper<>();
+        ireserveQueryWrapper.eq("car_id", carId);
+        ireserveMapper.delete(ireserveQueryWrapper);
+        if (carSpaceDeleteRes == 0) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "系统错误");
         }
         return true;
@@ -143,18 +147,27 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
         if (carId <= 0) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "车位ID不能为空");
         }
+        QueryWrapper<Reservation> reservation = new QueryWrapper<>();
+        reservation.eq("car_id",carId);
+        reservation.eq("reserve_status",0);
+        Long count = reservationMapper.selectCount(reservation);
+        if(count > 0){
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆仍被预约");
+        }
         Carspace carSpace = carSpaceMapper.selectById(carId);
         carSpace.setCarStatus(0);
         boolean updateResult = this.updateById(carSpace);
         if (!updateResult) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "发布失败了");
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "系统出现错误");
         }
         return updateResult;
     }
 
     @Override
     public List<ComplCarspace> listCarSpaces() {
-        List<Carspace> carspaces = carSpaceMapper.selectList(new QueryWrapper<>());
+        QueryWrapper<Carspace> carspaceQueryWrapper = new QueryWrapper<>();
+        carspaceQueryWrapper.eq("car_status",1);
+        List<Carspace> carspaces = carSpaceMapper.selectList(carspaceQueryWrapper);
         return listComplCarspacesByList(carspaces);
     }
 
@@ -171,7 +184,7 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
         QueryWrapper<Reservation> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("reserver_id", reserverId);
         queryWrapper.eq("reserve_status", 0);
-        Set<Reservation> reservations =new HashSet<Reservation>(reservationMapper.selectList(queryWrapper)) ;
+        Set<Reservation> reservations = new HashSet<Reservation>(reservationMapper.selectList(queryWrapper));
         List<Long> CarIds = new ArrayList<>();
         for (Reservation reservation : reservations) {
             CarIds.add(reservation.getCarId());
@@ -187,7 +200,7 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
             ireserveQueryWrapper.eq("car_id", carSpace.getCarId());
             List<Ireserve> ires = ireserveMapper.selectList(ireserveQueryWrapper);
             User user = userMapper.selectById(carSpace.getOwnerId());
-            complCarspaces.add(getSafetyComplCarSpace(new ComplCarspace(carSpace,ires, user)));
+            complCarspaces.add(getSafetyComplCarSpace(new ComplCarspace(carSpace, ires, user)));
         }
         return complCarspaces;
     }
@@ -201,30 +214,12 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
             QueryWrapper<Ireserve> ireserveQueryWrapper = new QueryWrapper<Ireserve>();
             ireserveQueryWrapper.eq("car_id", carSpace.getCarId());
             List<Ireserve> ires = ireserveMapper.selectList(ireserveQueryWrapper);
-//            QueryWrapper<Reservation> queryWrapper = new QueryWrapper<Reservation>();
-//            queryWrapper.eq("car_id", carSpace.getCarId());
-//            queryWrapper.eq("reserve_status", 0);
-//            List<Reservation> reservations = reservationMapper.selectList(queryWrapper);
-//            Map<LocalDateTime, LocalDateTime> reserveSlots = new HashMap<LocalDateTime, LocalDateTime>();
-//            int reserveStatus = -1;
-//            for (Reservation reservation : reservations) {
-//                reserveSlots.put(reservation.getReserveStartTime(), reservation.getReserveEndTime());
-//                reserveStatus = reservation.getReserveStatus();
-//            }
-//            Map<LocalDateTime, LocalDateTime> availableSlots = new HashMap<>();
-//            for (LocalDateTime left : reserveSlots.keySet()) {
-//                if (left.isAfter(startTime) && left.isBefore(endTime)) {
-//                    availableSlots.put(startTime, left);
-//                }
-//                if (reserveSlots.get(left).isAfter(startTime) && reserveSlots.get(left).isBefore(endTime)) {
-//                    availableSlots.put(reserveSlots.get(left), endTime);
-//                }
-//            }
             User user = userMapper.selectById(carSpace.getOwnerId());
-            complCarspaces.add(getSafetyComplCarSpace(new ComplCarspace(carSpace,ires, user)));
+            complCarspaces.add(getSafetyComplCarSpace(new ComplCarspace(carSpace, ires, user)));
         }
         return complCarspaces;
     }
+
     @Override
     public ComplCarspace getSafetyComplCarSpace(ComplCarspace complCarspace) {
         Carspace safetyCarspace = new Carspace();
@@ -234,8 +229,9 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
         safetyCarspace.setPrice(carspace.getPrice());
         safetyCarspace.setImageUrl(carspace.getImageUrl());
         safetyCarspace.setCarStatus(carspace.getCarStatus());
+        safetyCarspace.setOwnerId(carspace.getOwnerId());
         List<Ireserve> safetyIreserves = new ArrayList<>();
-        for(Ireserve ireserve:complCarspace.getIreseres()){
+        for (Ireserve ireserve : complCarspace.getIreseres()) {
             safetyIreserves.add(ireserveService.getSafetyIreserve(ireserve));
         }
         complCarspace.setCarspace(safetyCarspace);
