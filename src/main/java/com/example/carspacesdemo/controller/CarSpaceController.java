@@ -5,7 +5,6 @@ import com.example.carspacesdemo.common.IdRequest;
 import com.example.carspacesdemo.common.ErrorCode;
 import com.example.carspacesdemo.exception.BusinessException;
 import com.example.carspacesdemo.model.dto.carspacesinfo.CarSpaceUpdateRequest;
-import com.example.carspacesdemo.model.entity.Carspace;
 import com.example.carspacesdemo.model.entity.ComplCarspace;
 import com.example.carspacesdemo.model.dto.carspacesinfo.CarSpaceCreateRequest;
 import com.example.carspacesdemo.model.entity.User;
