@@ -11,10 +11,18 @@ spring:
     url: jdbc:mysql://localhost:3306/carspaces
     username: root
     password: 20030228
+  #   Redis 配置
+  redis:
+    database: 1
+    host: 132.232.108.7
+    port: 6379
+    timeout: 5000
+
 server:
   port: 8080
   servlet:
     context-path: /api
+
 
 mybatis-plus:
   global-config:

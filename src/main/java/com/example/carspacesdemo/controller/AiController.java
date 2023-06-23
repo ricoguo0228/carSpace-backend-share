@@ -5,6 +5,7 @@ import com.example.carspacesdemo.common.ErrorCode;
 import com.example.carspacesdemo.config.ThreadPoolExecutorConfig;
 import com.example.carspacesdemo.exception.BusinessException;
 import com.example.carspacesdemo.manager.AiManager;
+import com.example.carspacesdemo.manager.RedisLimiterManager;
 import com.example.carspacesdemo.model.dto.Ai.AiRequest;
 import com.example.carspacesdemo.model.dto.Ai.AiSureCreateCarSpaceRequest;
 import com.example.carspacesdemo.model.entity.AiResponse;
@@ -33,6 +34,8 @@ public class AiController {
     CarSpaceService carSpacesService;
     @Resource
     private ThreadPoolExecutor threadPoolExecutor;
+    @Resource
+    private RedisLimiterManager redisLimiterManager;
 
     @PostMapping("/CarSpaceCreate")
     public BaseResponse<AiResponse> AiCreateCarSpace(@RequestBody AiRequest aiRequest){
@@ -58,6 +61,8 @@ public class AiController {
         if(id <=0){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"系统出现错误");
         }
+        // 限流判断，每个用户一个限流器
+        redisLimiterManager.doRateLimit("user_"+id);
         CompletableFuture.runAsync(()->{
             try {
                 String location = aiSureCreateCarSpaceRequest.getLocation();
@@ -66,7 +71,7 @@ public class AiController {
             }catch (Exception e){
                 throw new BusinessException(ErrorCode.DAO_ERROR,"输出库出现错误");
             }
-        });
+        },threadPoolExecutor);
         return success("已经通知去做啦");
     }
 }

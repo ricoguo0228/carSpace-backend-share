@@ -7,6 +7,7 @@ public enum ErrorCode {
     SYSTEM_ERROR(50000,"系统内部错误",""),
     DAO_ERROR(40003,"数据库操作错误",""),
     AI_ERROR(10086,"AI错误",""),
+    TOO_MANY_REQUEST(42900,"请求频繁",""),
     ;
     private int code;
     private String message;
