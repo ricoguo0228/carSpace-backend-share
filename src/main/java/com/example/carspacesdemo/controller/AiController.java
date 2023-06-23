@@ -2,6 +2,7 @@ package com.example.carspacesdemo.controller;
 
 import com.example.carspacesdemo.common.BaseResponse;
 import com.example.carspacesdemo.common.ErrorCode;
+import com.example.carspacesdemo.config.ThreadPoolExecutorConfig;
 import com.example.carspacesdemo.exception.BusinessException;
 import com.example.carspacesdemo.manager.AiManager;
 import com.example.carspacesdemo.model.dto.Ai.AiRequest;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
+
 import static com.example.carspacesdemo.common.ResultUtils.success;
 import static com.example.carspacesdemo.constant.UserConstants.USER_LOGIN_STATE;
 
@@ -26,7 +30,9 @@ public class AiController {
     @Resource
     AiManager aiManager;
     @Resource
-    private CarSpaceService carSpacesService;
+    CarSpaceService carSpacesService;
+    @Resource
+    private ThreadPoolExecutor threadPoolExecutor;
 
     @PostMapping("/CarSpaceCreate")
     public BaseResponse<AiResponse> AiCreateCarSpace(@RequestBody AiRequest aiRequest){
@@ -39,11 +45,11 @@ public class AiController {
         if (splits.length < 2) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, splits[0]);
         }
-        String response = "我将为您创建一个位于"+splits[0]+"的车位，小时价格是"+splits[1]+"，确定以继续";
+        String response = "AI将为您创建一个位于"+splits[0]+"的车位，小时价格是"+splits[1]+"，确定以继续";
         return success(new AiResponse(splits[0],Integer.parseInt(splits[1]),response));
     }
     @PostMapping("/CarSpaceCreateSure")
-    public BaseResponse<Long> AiCreateCarSpaceSure(@RequestBody AiSureCreateCarSpaceRequest aiSureCreateCarSpaceRequest, HttpServletRequest httpServletRequest){
+    public BaseResponse<String> AiCreateCarSpaceSure(@RequestBody AiSureCreateCarSpaceRequest aiSureCreateCarSpaceRequest, HttpServletRequest httpServletRequest){
         User user = (User)httpServletRequest.getSession().getAttribute(USER_LOGIN_STATE);
         if(user==null){
             throw new BusinessException(ErrorCode.LOGIN_ERROR,"用户未登录");
@@ -52,9 +58,15 @@ public class AiController {
         if(id <=0){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"系统出现错误");
         }
-        String location = aiSureCreateCarSpaceRequest.getLocation();
-        int price = aiSureCreateCarSpaceRequest.getPrice();
-        long carId = carSpacesService.AiCarSpaceCreate(id, location, price, "");
-        return success(carId);
+        CompletableFuture.runAsync(()->{
+            try {
+                String location = aiSureCreateCarSpaceRequest.getLocation();
+                int price = aiSureCreateCarSpaceRequest.getPrice();
+                carSpacesService.AiCarSpaceCreate(id, location, price, "");
+            }catch (Exception e){
+                throw new BusinessException(ErrorCode.DAO_ERROR,"输出库出现错误");
+            }
+        });
+        return success("已经通知去做啦");
     }
 }
