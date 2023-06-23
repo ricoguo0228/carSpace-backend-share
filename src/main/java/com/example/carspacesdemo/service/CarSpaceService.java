@@ -29,8 +29,8 @@ public interface CarSpaceService extends IService<Carspace> {
      * @return
      * @author Rico
      */
-    long carSpaceCreate(long ownerId, String location, int price, String imageUrl, LocalDateTime startTime, LocalDateTime endTime);
-
+    long carSpaceCreate(long userId, String location, int price, String imageUrl, LocalDateTime startTime, LocalDateTime endTime);
+    long AiCarSpaceCreate(long userId, String location, int price, String imageUrl);
     /**
      * 更新车位信息
      *

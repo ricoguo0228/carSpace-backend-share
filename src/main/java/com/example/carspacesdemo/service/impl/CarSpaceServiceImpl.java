@@ -88,6 +88,27 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
         return carSpace.getCarId();
     }
 
+    @Override
+    public long AiCarSpaceCreate(long userId, String location, int price, String imageUrl) {
+        if (StringUtils.isAnyBlank(location)) {
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "位置信息不能为空");
+        }
+        if (price < 0) {
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "价格不能小于0");
+        }
+        //保存基础车位信息到车位表中
+        Carspace carSpace = new Carspace();
+        carSpace.setLocation(location);
+        carSpace.setPrice(price);
+        carSpace.setImageUrl(imageUrl);
+        carSpace.setOwnerId(userId);
+        boolean saveResult = this.save(carSpace);
+        if (!saveResult) {
+            throw new BusinessException(ErrorCode.DAO_ERROR, "数据库出现错误");
+        }
+        return carSpace.getCarId();
+    }
+
 
     @Override
     public boolean carSpaceUpdate(long carId, String location, int price, String imageUrl) {
