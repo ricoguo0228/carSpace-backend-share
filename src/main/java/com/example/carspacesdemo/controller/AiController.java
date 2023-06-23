@@ -6,6 +6,7 @@ import com.example.carspacesdemo.exception.BusinessException;
 import com.example.carspacesdemo.manager.AiManager;
 import com.example.carspacesdemo.model.dto.Ai.AiRequest;
 import com.example.carspacesdemo.model.dto.Ai.AiSureCreateCarSpaceRequest;
+import com.example.carspacesdemo.model.entity.AiResponse;
 import com.example.carspacesdemo.model.entity.User;
 import com.example.carspacesdemo.service.CarSpaceService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +29,7 @@ public class AiController {
     private CarSpaceService carSpacesService;
 
     @PostMapping("/CarSpaceCreate")
-    public BaseResponse<String> AiCreateCarSpace(@RequestBody AiRequest aiRequest){
+    public BaseResponse<AiResponse> AiCreateCarSpace(@RequestBody AiRequest aiRequest){
         String aiStr = aiRequest.getAiStr();
         if(aiStr.isEmpty()){
             throw new BusinessException(ErrorCode.AI_ERROR,"要求为空");
@@ -39,7 +40,7 @@ public class AiController {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, splits[0]);
         }
         String response = "我将为您创建一个位于"+splits[0]+"的车位，小时价格是"+splits[1]+"，确定以继续";
-        return success(response);
+        return success(new AiResponse(splits[0],Integer.parseInt(splits[1]),response));
     }
     @PostMapping("/CarSpaceCreateSure")
     public BaseResponse<Long> AiCreateCarSpaceSure(@RequestBody AiSureCreateCarSpaceRequest aiSureCreateCarSpaceRequest, HttpServletRequest httpServletRequest){
