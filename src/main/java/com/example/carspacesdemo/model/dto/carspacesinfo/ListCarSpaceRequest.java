@@ -12,7 +12,8 @@ public class ListCarSpaceRequest  extends PageRequest implements Serializable{
     long reserverId;
     long ownerId;
     String location;
-    List<LocalDateTime> timeSlots;
+    LocalDateTime startTime;
+    LocalDateTime endTime;
     int startPrice;
     int endPrice;
 }

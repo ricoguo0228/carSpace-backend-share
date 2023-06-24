@@ -8,6 +8,7 @@ import com.example.carspacesdemo.mapper.CarspaceMapper;
 import com.example.carspacesdemo.mapper.IreserveMapper;
 import com.example.carspacesdemo.mapper.ReservationMapper;
 import com.example.carspacesdemo.mapper.UserMapper;
+import com.example.carspacesdemo.model.dto.carspacesinfo.ListCarSpaceRequest;
 import com.example.carspacesdemo.model.entity.*;
 import com.example.carspacesdemo.service.CarSpaceService;
 import com.example.carspacesdemo.service.IreserveService;
@@ -169,10 +170,10 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "系统出现错误");
         }
         QueryWrapper<Reservation> reservation = new QueryWrapper<>();
-        reservation.eq("car_id",carId);
-        reservation.eq("reserve_status",0);
+        reservation.eq("car_id", carId);
+        reservation.eq("reserve_status", 0);
         Long count = reservationMapper.selectCount(reservation);
-        if(count > 0){
+        if (count > 0) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆仍被预约");
         }
         Carspace carSpace = carSpaceMapper.selectById(carId);
@@ -207,6 +208,9 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
 
     @Override
     public List<ComplCarspace> listComplCarspacesByList(List<Carspace> carspaces) {
+        if (carspaces.isEmpty()) {
+            return new ArrayList<>();
+        }
         List<ComplCarspace> complCarspaces = new ArrayList<>();
         for (Carspace carSpace : carspaces) {
             QueryWrapper<Ireserve> ireserveQueryWrapper = new QueryWrapper<Ireserve>();
@@ -250,6 +254,26 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
         complCarspace.setCarspace(safetyCarspace);
         complCarspace.setIreseres(safetyIreserves);
         return complCarspace;
+    }
+
+    @Override
+    public List<Carspace> timeSelect(ListCarSpaceRequest listCarSpaceRequest) {
+        LocalDateTime startTime = listCarSpaceRequest.getStartTime();
+        LocalDateTime endTime = listCarSpaceRequest.getEndTime();
+        startTime = startTime == null ? null : startTime.plusHours(8);
+        endTime = endTime == null ? null : endTime.plusHours(8);
+        QueryWrapper<Ireserve> queryWrapper = new QueryWrapper<>();
+        queryWrapper.gt(startTime != null, "start_time", startTime);
+        queryWrapper.lt(endTime != null, "end_time", endTime);
+        List<Ireserve> ireserves = ireserveMapper.selectList(queryWrapper);
+        Set<Carspace> result = new HashSet<>();
+        for (Ireserve ireserve : ireserves) {
+            Carspace carspace = carSpaceMapper.selectById(ireserve.getCarId());
+            if(carspace.getCarStatus()==1){
+                result.add(carspace);
+            }
+        }
+        return new ArrayList<>(result);
     }
 }
 

@@ -1,11 +1,13 @@
 package com.example.carspacesdemo.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.carspacesdemo.model.dto.carspacesinfo.ListCarSpaceRequest;
 import com.example.carspacesdemo.model.entity.Carspace;
 import com.example.carspacesdemo.model.entity.ComplCarspace;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Rico
@@ -99,4 +101,5 @@ public interface CarSpaceService extends IService<Carspace> {
      */
     ComplCarspace getSafetyComplCarSpace(ComplCarspace complCarspace);
 
+    List<Carspace> timeSelect(ListCarSpaceRequest listCarSpaceRequest);
 }

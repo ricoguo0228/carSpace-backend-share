@@ -7,20 +7,26 @@ import com.example.carspacesdemo.common.IdRequest;
 import com.example.carspacesdemo.common.ErrorCode;
 import com.example.carspacesdemo.constant.CommonConstant;
 import com.example.carspacesdemo.exception.BusinessException;
+import com.example.carspacesdemo.mapper.IreserveMapper;
 import com.example.carspacesdemo.model.dto.carspacesinfo.CarSpaceUpdateRequest;
 import com.example.carspacesdemo.model.dto.carspacesinfo.ListCarSpaceRequest;
 import com.example.carspacesdemo.model.entity.Carspace;
 import com.example.carspacesdemo.model.entity.ComplCarspace;
 import com.example.carspacesdemo.model.dto.carspacesinfo.CarSpaceCreateRequest;
+import com.example.carspacesdemo.model.entity.Ireserve;
 import com.example.carspacesdemo.model.entity.User;
 import com.example.carspacesdemo.service.CarSpaceService;
 import com.example.carspacesdemo.utils.SqlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.example.carspacesdemo.common.ResultUtils.success;
 import static com.example.carspacesdemo.constant.UserConstants.USER_LOGIN_STATE;
@@ -30,6 +36,9 @@ import static com.example.carspacesdemo.constant.UserConstants.USER_LOGIN_STATE;
 public class CarSpaceController {
     @Resource
     private CarSpaceService carSpacesService;
+    @Resource
+    IreserveMapper ireserveMapper;
+
     @PostMapping("/current")
     public BaseResponse<ComplCarspace> getCurrentCarSpace(@RequestBody IdRequest idRequest) {
         Long id = idRequest.getId();
@@ -48,8 +57,8 @@ public class CarSpaceController {
         List<LocalDateTime> timeSlots = createRequest.getTimeSlots();
         LocalDateTime startTime = timeSlots.get(0).plusHours(8);
         LocalDateTime endTime = timeSlots.get(1).plusHours(8);
-        if(startTime.isAfter(endTime)){
-            throw new BusinessException(ErrorCode.ERROR_PARAM,"开始时间不可以比结束时间晚");
+        if (startTime.isAfter(endTime)) {
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "开始时间不可以比结束时间晚");
         }
         if (StringUtils.isAnyBlank(location)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
@@ -57,7 +66,7 @@ public class CarSpaceController {
         //获取用户id
         User user = (User) httpServletRequest.getSession().getAttribute(USER_LOGIN_STATE);
         long userId = user.getUserId();
-        long CarId = carSpacesService.carSpaceCreate(userId, location, price, imageUrl, startTime,endTime);
+        long CarId = carSpacesService.carSpaceCreate(userId, location, price, imageUrl, startTime, endTime);
         return success(CarId);
     }
 
@@ -80,10 +89,10 @@ public class CarSpaceController {
         String location = updateRequest.getLocation();
         int price = updateRequest.getPrice();
         String imageUrl = updateRequest.getImageUrl();
-        if(StringUtils.isAnyBlank(location)){
+        if (StringUtils.isAnyBlank(location)) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "参数不可以为空");
         }
-        if(price <0){
+        if (price < 0) {
             throw new BusinessException(ErrorCode.ERROR_PARAM, "价格不规范");
         }
         if (carId <= 0) {
@@ -119,12 +128,19 @@ public class CarSpaceController {
         long current = listCarSpaceRequest.getCurrent();
         long size = listCarSpaceRequest.getPageSize();
         // 限制爬虫
-        if(size >20){
+        if (size > 20) {
             throw new BusinessException(ErrorCode.ERROR_PARAM);
         }
+        //获取时间段限制的车位信息和普通限制的车位信息
+        List<Carspace> timeSelect = carSpacesService.timeSelect(listCarSpaceRequest);
         Page<Carspace> carSpacesPage = carSpacesService.page(new Page<>(current, size), getQueryWrapper(listCarSpaceRequest));
+        //转换二者为ComplCarsspaces
         List<ComplCarspace> complCarspaces = carSpacesService.listComplCarspacesByList(carSpacesPage.getRecords());
-        Page<ComplCarspace> complCarSpacesPage=new Page<>(current,size);
+        List<ComplCarspace> timeSelectCarSpaces = carSpacesService.listComplCarspacesByList(timeSelect);
+
+        complCarspaces.retainAll(timeSelectCarSpaces);
+
+        Page<ComplCarspace> complCarSpacesPage = new Page<>(current, size);
         complCarSpacesPage.setRecords(complCarspaces);
         return success(complCarSpacesPage);
     }
@@ -135,13 +151,13 @@ public class CarSpaceController {
         long current = listCarSpaceRequest.getCurrent();
         long size = listCarSpaceRequest.getPageSize();
         // 限制爬虫
-        if(size >20){
+        if (size > 20) {
             throw new BusinessException(ErrorCode.ERROR_PARAM);
         }
         Page<Carspace> carSpacesPage = carSpacesService.page(new Page<>(current, size), getQueryWrapper(listCarSpaceRequest));
         List<Carspace> carSpaces = carSpacesPage.getRecords();
         List<ComplCarspace> complCarspaces = carSpacesService.listComplCarspacesByList(carSpaces);
-        Page<ComplCarspace> complCarSpacesPage=new Page<>(current,size);
+        Page<ComplCarspace> complCarSpacesPage = new Page<>(current, size);
         complCarSpacesPage.setRecords(complCarspaces);
         return success(complCarSpacesPage);
     }
@@ -152,10 +168,11 @@ public class CarSpaceController {
         long current = listCarSpaceRequest.getCurrent();
         long size = listCarSpaceRequest.getPageSize();
         List<ComplCarspace> complCarSpaces = carSpacesService.listReservedCarSpaces(reserverId);
-        Page<ComplCarspace> complCarSpacesPage = new Page<>(current,size);
+        Page<ComplCarspace> complCarSpacesPage = new Page<>(current, size);
         complCarSpacesPage.setRecords(complCarSpaces);
         return success(complCarSpacesPage);
     }
+
     /**
      * 获取查询包装类
      *
@@ -167,16 +184,15 @@ public class CarSpaceController {
         if (listCarSpaceRequest == null) {
             return queryWrapper;
         }
-
         String sortField = listCarSpaceRequest.getSortField();
         String sortOrder = listCarSpaceRequest.getSortOrder();
         String name = listCarSpaceRequest.getLocation();
         long ownerId = listCarSpaceRequest.getOwnerId();
         int startPrice = listCarSpaceRequest.getStartPrice();
         int endPrice = listCarSpaceRequest.getEndPrice();
-        queryWrapper.eq(ownerId>0, "owner_id", ownerId);
-        queryWrapper.gt(startPrice>0, "price", startPrice);
-        queryWrapper.lt(endPrice>0, "price", endPrice);
+        queryWrapper.eq(ownerId > 0, "owner_id", ownerId);
+        queryWrapper.gt(startPrice > 0, "price", startPrice);
+        queryWrapper.lt(endPrice > 0, "price", endPrice);
         queryWrapper.like(StringUtils.isNotBlank(name), "location", name);
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
