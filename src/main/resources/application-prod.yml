@@ -1,0 +1,15 @@
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://132.232.108.7:3306/rico
+    username: rico
+    password: 20030228
+  #   Redis 配置
+  redis:
+    database: 1
+    host: 132.232.108.7
+    port: 6379
+    timeout: 5000
+    password: 20030228
