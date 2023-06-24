@@ -69,7 +69,7 @@ public class AiController {
                 int price = aiSureCreateCarSpaceRequest.getPrice();
                 carSpacesService.AiCarSpaceCreate(id, location, price, "");
             }catch (Exception e){
-                throw new BusinessException(ErrorCode.DAO_ERROR,"输出库出现错误");
+                throw new BusinessException(ErrorCode.DAO_ERROR,"数据库出现错误");
             }
         },threadPoolExecutor);
         return success("已经通知去做啦");
