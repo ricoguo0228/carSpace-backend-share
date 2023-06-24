@@ -132,10 +132,6 @@ public class CarSpaceController {
 
     @PostMapping("/listUserCarSpaces")
     public BaseResponse<Page<ComplCarspace>> listUserSpaces(@RequestBody ListCarSpaceRequest listCarSpaceRequest) {
-        long id = listCarSpaceRequest.getId();
-        if (id <= 0) {
-            throw new BusinessException(ErrorCode.ERROR_PARAM, "车辆id不规范");
-        }
         long current = listCarSpaceRequest.getCurrent();
         long size = listCarSpaceRequest.getPageSize();
         // 限制爬虫
@@ -151,10 +147,14 @@ public class CarSpaceController {
     }
 
     @PostMapping("/listReservedCarSpaces")
-    public BaseResponse<List<ComplCarspace>> listReservedSpaces(@RequestBody IdRequest idRequest) {
-        long id = idRequest.getId();
-        List<ComplCarspace> complCarSpaces = carSpacesService.listReservedCarSpaces(id);
-        return success(complCarSpaces);
+    public BaseResponse<Page<ComplCarspace>> listReservedSpaces(@RequestBody ListCarSpaceRequest listCarSpaceRequest) {
+        long reserverId = listCarSpaceRequest.getReserverId();
+        long current = listCarSpaceRequest.getCurrent();
+        long size = listCarSpaceRequest.getPageSize();
+        List<ComplCarspace> complCarSpaces = carSpacesService.listReservedCarSpaces(reserverId);
+        Page<ComplCarspace> complCarSpacesPage = new Page<>(current,size);
+        complCarSpacesPage.setRecords(complCarSpaces);
+        return success(complCarSpacesPage);
     }
     /**
      * 获取查询包装类
@@ -170,11 +170,11 @@ public class CarSpaceController {
 
         String sortField = listCarSpaceRequest.getSortField();
         String sortOrder = listCarSpaceRequest.getSortOrder();
-        String name = listCarSpaceRequest.getName();
-        long id = listCarSpaceRequest.getId();
+        String name = listCarSpaceRequest.getLocation();
+        long ownerId = listCarSpaceRequest.getOwnerId();
         int startPrice = listCarSpaceRequest.getStartPrice();
         int endPrice = listCarSpaceRequest.getEndPrice();
-        queryWrapper.eq(id>0, "owner_id", id);
+        queryWrapper.eq(ownerId>0, "owner_id", ownerId);
         queryWrapper.gt(startPrice>0, "price", startPrice);
         queryWrapper.lt(endPrice>0, "price", endPrice);
         queryWrapper.like(StringUtils.isNotBlank(name), "location", name);

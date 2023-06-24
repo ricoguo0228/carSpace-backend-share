@@ -9,8 +9,9 @@ import java.util.List;
 
 @Data
 public class ListCarSpaceRequest  extends PageRequest implements Serializable{
-    long id;
-    String name;
+    long reserverId;
+    long ownerId;
+    String location;
     List<LocalDateTime> timeSlots;
     int startPrice;
     int endPrice;
