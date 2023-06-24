@@ -2,20 +2,18 @@ package com.example.carspacesdemo.controller;
 
 import com.example.carspacesdemo.common.BaseResponse;
 import com.example.carspacesdemo.common.ErrorCode;
-import com.example.carspacesdemo.config.ThreadPoolExecutorConfig;
 import com.example.carspacesdemo.exception.BusinessException;
 import com.example.carspacesdemo.manager.AiManager;
 import com.example.carspacesdemo.manager.RedisLimiterManager;
 import com.example.carspacesdemo.model.dto.Ai.AiRequest;
 import com.example.carspacesdemo.model.dto.Ai.AiSureCreateCarSpaceRequest;
 import com.example.carspacesdemo.model.entity.AiResponse;
-import com.example.carspacesdemo.model.entity.User;
 import com.example.carspacesdemo.service.CarSpaceService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.example.carspacesdemo.model.entity.User;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
@@ -57,7 +55,7 @@ public class AiController {
         if(user==null){
             throw new BusinessException(ErrorCode.LOGIN_ERROR,"用户未登录");
         }
-        Long id = user.getUserId();
+        long id = user.getUserId();
         if(id <=0){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"系统出现错误");
         }

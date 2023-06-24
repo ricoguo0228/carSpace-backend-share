@@ -61,14 +61,6 @@ public interface CarSpaceService extends IService<Carspace> {
     boolean carSpaceInvoke(long carId);
 
     /**
-     * 获取所有车位
-     *
-     * @return
-     * @author Rico
-     */
-    List<ComplCarspace> listCarSpaces();
-
-    /**
      * 获取用户创建的所有车位
      *
      * @param ownerId

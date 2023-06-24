@@ -185,14 +185,6 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
     }
 
     @Override
-    public List<ComplCarspace> listCarSpaces() {
-        QueryWrapper<Carspace> carspaceQueryWrapper = new QueryWrapper<>();
-        carspaceQueryWrapper.eq("car_status",1);
-        List<Carspace> carspaces = carSpaceMapper.selectList(carspaceQueryWrapper);
-        return listComplCarspacesByList(carspaces);
-    }
-
-    @Override
     public List<ComplCarspace> listUserCarSpaces(long ownerId) {
         QueryWrapper<Carspace> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("owner_id", ownerId);
@@ -259,7 +251,6 @@ public class CarSpaceServiceImpl extends ServiceImpl<CarspaceMapper, Carspace> i
         complCarspace.setIreseres(safetyIreserves);
         return complCarspace;
     }
-
 }
 
 
