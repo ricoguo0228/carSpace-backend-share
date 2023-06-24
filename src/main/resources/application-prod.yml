@@ -5,13 +5,13 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://132.232.108.7:3306/rico
-    username: rico
-    password: 20030228
+    url: jdbc:mysql://0000.0000.0000.0000:00000/0000
+    username: 0000
+    password: 000000
   #   Redis 配置
   redis:
     database: 1
-    host: 132.232.108.7
-    port: 6379
+    host: 0000.0000.0000.0000
+    port: 000000
     timeout: 5000
-    password: 20030228
+    password: 000000

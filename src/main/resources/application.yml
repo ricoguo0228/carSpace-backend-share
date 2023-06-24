@@ -8,16 +8,17 @@ spring:
     name: carspacesdemo
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/carspaces
-    username: root
-    password: 20030228
+    url: jdbc:mysql://0000.0000.0000.0000:00000/0000
+    username: 0000
+    password: 000000
   #   Redis 配置
   redis:
     database: 1
-    host: localhost
-    port: 6379
+    host: 0000.0000.0000.0000
+    port: 000000
     timeout: 5000
-    password: 123456
+    password: 000000
+
 server:
   port: 8080
   servlet:
